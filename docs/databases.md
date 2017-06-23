@@ -1,4 +1,4 @@
-#KAGGLE a.k.a. MMI DATABASE
+# KAGGLE a.k.a. MMI DATABASE
 
 https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data
 
@@ -9,7 +9,7 @@ https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression
 * ~ 7 GB
 
 
-#VIDEO EMOTIONS PAPER
+# VIDEO EMOTIONS PAPER
 
 http://yugangjiang.info/research/VideoEmotions/index.html
 
@@ -19,7 +19,7 @@ http://yugangjiang.info/research/VideoEmotions/index.html
 * ~ 11 GB
 
 
-#Japanese Female Expression Database
+# Japanese Female Expression Database
 
 http://www.kasrl.org/jaffe.html
 
