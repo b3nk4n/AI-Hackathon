@@ -1,0 +1,14 @@
+{
+    "name": "emotional-ai-leaderboards",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+    "start": "node app.js",
+    "mongo": "mkdir -p data & mongod --dbpath data --port 20984"
+},
+    "dependencies": {
+    "express": "~4.14.1",
+    "express-mongo-rest": "~0.1.2",
+    "debug": "~2.6.0"
+    }
+}
