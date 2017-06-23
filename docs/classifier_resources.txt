@@ -1,0 +1,36 @@
+HappyNet - https://github.com/danduncan/HappyNet
+	- 6 emotions (7th didn't work for the paper), 57% accuracy, multiface, realtime
+
+
+DeXpression - https://arxiv.org/pdf/1509.05371.pdf
+	- convnet, ~98% accuracy 
+	- MMI and CK+ dataset
+	- single face
+
+
+Emotion Detection with Speech - https://arxiv.org/pdf/1701.08071.pdf
+
+
+TU Delft Emotion Detection CNN - https://github.com/isseu/emotion-recognition-neural-networks
+	- FER-2013 dataset - http://www.socsci.ru.nl:8180/RaFD2/RaFD?p=main
+	- this dataset can also be obtained from https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data
+
+
+EmotionNet - https://github.com/co60ca/EmotionNet
+	- face images
+	- http://www.consortium.ri.cmu.edu/ckagree/ (keep checking we got 403 error)
+	- http://www.emotionlab.se/resources/kdef (shiv has already downloaded it but incase you need it urgently use this link https://drive.google.com/uc?id=0B-ajLIaD56t9N25EUk42SE5lTTA&export=download) - 7 emotions, different angles
+
+
+https://github.com/andreteixeiralopes/deepfacialexpression
+	- 
+
+
+Datasets
+	- http://yugangjiang.info/research/VideoEmotions/index.html
+		- https://drive.google.com/drive/folders/0B5peJ1MHnIWGd3pFbzMyTG5BSGs
+
+
+
+
+
