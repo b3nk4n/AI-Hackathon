@@ -79,7 +79,7 @@ class AbstractModel(object):
             return tf.identity(loss, name="loss_with_reg")
         
     @abstractmethod
-    def validation(self, predictions, labels, device_scope=None):
+    def validation(self, predictions, labels):
         """Returns a dict of {title: scalar-Tensor, ...} that are evaluated during 
            validation and training.
            Note:
