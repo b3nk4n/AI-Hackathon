@@ -13,6 +13,7 @@ from models import dexpression as m
 from models.dexpression.conf import dex_hyper_params as hyper_params
 from datasets import face_expression_dataset as ds
 import utils.tensor
+import utils.devices
 
 FLAGS = None
 
@@ -21,6 +22,9 @@ coloredlogs.install(level='INFO')
 
 
 def train(_):
+    # select the GPUS device
+    utils.devices.set_cuda_devices(FLAGS.gpu)
+
     """Starts the training. Executed only if run as a script."""
     global_step = tf.Variable(0, trainable=False, name='global_step')
     ph_training = tf.placeholder_with_default(False, [], name='is_training')
@@ -174,5 +178,7 @@ if __name__ == '__main__':
                         help='The root directory of the data.')
     PARSER.add_argument('--file_pattern', type=str, default='*.png',
                         help='The file pattern of the image data to load.')
+    PARSER.add_argument('--gpu', type=int, default=0,
+                        help='The GPU device to use.')
     FLAGS, UNPARSED = PARSER.parse_known_args()
     tf.app.run(main=train, argv=[sys.argv[0]] + UNPARSED)
