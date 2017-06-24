@@ -10,4 +10,4 @@ def set_cuda_devices(gpu_device):
     gpu_device: int
         The CUDA device to use, such as [0,1].
     """
-    os.environ['CUDA_VISIBLE_DEVICES'] = gpu_device
+    os.environ['CUDA_VISIBLE_DEVICES'] = str(gpu_device)
