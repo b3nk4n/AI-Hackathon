@@ -19,9 +19,6 @@ FLAGS = None
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='INFO')
 
-# disable TensorFlow C++ warnings
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
 
 def train(_):
     """Starts the training. Executed only if run as a script."""
