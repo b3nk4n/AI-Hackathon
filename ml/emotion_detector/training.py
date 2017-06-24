@@ -8,7 +8,6 @@ import logging
 import coloredlogs
 
 import tensorflow as tf
-from tensorflow.python.ops import control_flow_ops
 
 from models import dexpression as m
 from models.dexpression.conf import dex_hyper_params as hyper_params

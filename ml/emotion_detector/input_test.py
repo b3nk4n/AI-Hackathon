@@ -16,7 +16,7 @@ def main():
     print('Valid-size: {}'.format(dataset.valid_size))
 
     # create input pipeline
-    queue_images, queue_labels = dataset.train_inputs(BATCH_SIZE, augment_data=False)
+    queue_images, queue_labels = dataset.train_inputs(BATCH_SIZE, augment_data=True)
 
     # Create a session for running operations in the Graph.
     with tf.Session() as sess:

@@ -76,8 +76,8 @@ class FaceExpressionDataset(object):
             # Crop the central [height, width] of the image
             result_image = tf.image.resize_image_with_crop_or_pad(result_image,
                                                                   input_example.height, input_example.width)
-            result_image.set_shape(result_image.get_shape().as_list()[:-1] + [1])  # assuming using gray-scaled pictures
 
+        result_image.set_shape([input_example.height, input_example.width, input_example.depth])
         # Subtract off the mean and divide by the variance of the pixels
         # result_image = tf.image.per_image_standardization(result_image)
 
