@@ -1,0 +1,329 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		832FA80E1EFEC4860001B598 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 832FA80D1EFEC4860001B598 /* AppDelegate.swift */; };
+		832FA8121EFEC4870001B598 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 832FA8111EFEC4860001B598 /* Actions.sks */; };
+		832FA8161EFEC4870001B598 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 832FA8151EFEC4870001B598 /* GameViewController.swift */; };
+		832FA8191EFEC4870001B598 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 832FA8171EFEC4870001B598 /* Main.storyboard */; };
+		832FA81B1EFEC4870001B598 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 832FA81A1EFEC4870001B598 /* Assets.xcassets */; };
+		832FA81E1EFEC4870001B598 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 832FA81C1EFEC4870001B598 /* LaunchScreen.storyboard */; };
+		832FA8281EFEC5340001B598 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 832FA8251EFEC5340001B598 /* GameScene.swift */; };
+		832FA8291EFEC5340001B598 /* GridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 832FA8261EFEC5340001B598 /* GridView.swift */; };
+		832FA82A1EFEC5340001B598 /* SongManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 832FA8271EFEC5340001B598 /* SongManager.swift */; };
+		832FA82C1EFEC80A0001B598 /* emoji_faces in Resources */ = {isa = PBXBuildFile; fileRef = 832FA82B1EFEC80A0001B598 /* emoji_faces */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		832FA80A1EFEC4860001B598 /* EmotionHero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EmotionHero.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		832FA80D1EFEC4860001B598 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		832FA8111EFEC4860001B598 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
+		832FA8151EFEC4870001B598 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		832FA8181EFEC4870001B598 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		832FA81A1EFEC4870001B598 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		832FA81D1EFEC4870001B598 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		832FA81F1EFEC4870001B598 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		832FA8251EFEC5340001B598 /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		832FA8261EFEC5340001B598 /* GridView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridView.swift; sourceTree = "<group>"; };
+		832FA8271EFEC5340001B598 /* SongManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongManager.swift; sourceTree = "<group>"; };
+		832FA82B1EFEC80A0001B598 /* emoji_faces */ = {isa = PBXFileReference; lastKnownFileType = folder; path = emoji_faces; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		832FA8071EFEC4860001B598 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		832FA8011EFEC4860001B598 = {
+			isa = PBXGroup;
+			children = (
+				832FA80C1EFEC4860001B598 /* EmotionHero */,
+				832FA80B1EFEC4860001B598 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		832FA80B1EFEC4860001B598 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				832FA80A1EFEC4860001B598 /* EmotionHero.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		832FA80C1EFEC4860001B598 /* EmotionHero */ = {
+			isa = PBXGroup;
+			children = (
+				832FA82B1EFEC80A0001B598 /* emoji_faces */,
+				832FA8251EFEC5340001B598 /* GameScene.swift */,
+				832FA8261EFEC5340001B598 /* GridView.swift */,
+				832FA8271EFEC5340001B598 /* SongManager.swift */,
+				832FA80D1EFEC4860001B598 /* AppDelegate.swift */,
+				832FA8111EFEC4860001B598 /* Actions.sks */,
+				832FA8151EFEC4870001B598 /* GameViewController.swift */,
+				832FA8171EFEC4870001B598 /* Main.storyboard */,
+				832FA81A1EFEC4870001B598 /* Assets.xcassets */,
+				832FA81C1EFEC4870001B598 /* LaunchScreen.storyboard */,
+				832FA81F1EFEC4870001B598 /* Info.plist */,
+			);
+			path = EmotionHero;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		832FA8091EFEC4860001B598 /* EmotionHero */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 832FA8221EFEC4870001B598 /* Build configuration list for PBXNativeTarget "EmotionHero" */;
+			buildPhases = (
+				832FA8061EFEC4860001B598 /* Sources */,
+				832FA8071EFEC4860001B598 /* Frameworks */,
+				832FA8081EFEC4860001B598 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = EmotionHero;
+			productName = EmotionHero;
+			productReference = 832FA80A1EFEC4860001B598 /* EmotionHero.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		832FA8021EFEC4860001B598 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0830;
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = "Chris Kalas";
+				TargetAttributes = {
+					832FA8091EFEC4860001B598 = {
+						CreatedOnToolsVersion = 8.3.1;
+						DevelopmentTeam = E7S72SVH62;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 832FA8051EFEC4860001B598 /* Build configuration list for PBXProject "EmotionHero" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 832FA8011EFEC4860001B598;
+			productRefGroup = 832FA80B1EFEC4860001B598 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				832FA8091EFEC4860001B598 /* EmotionHero */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		832FA8081EFEC4860001B598 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				832FA8191EFEC4870001B598 /* Main.storyboard in Resources */,
+				832FA81B1EFEC4870001B598 /* Assets.xcassets in Resources */,
+				832FA82C1EFEC80A0001B598 /* emoji_faces in Resources */,
+				832FA81E1EFEC4870001B598 /* LaunchScreen.storyboard in Resources */,
+				832FA8121EFEC4870001B598 /* Actions.sks in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		832FA8061EFEC4860001B598 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				832FA82A1EFEC5340001B598 /* SongManager.swift in Sources */,
+				832FA8161EFEC4870001B598 /* GameViewController.swift in Sources */,
+				832FA8281EFEC5340001B598 /* GameScene.swift in Sources */,
+				832FA8291EFEC5340001B598 /* GridView.swift in Sources */,
+				832FA80E1EFEC4860001B598 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		832FA8171EFEC4870001B598 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				832FA8181EFEC4870001B598 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		832FA81C1EFEC4870001B598 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				832FA81D1EFEC4870001B598 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		832FA8201EFEC4870001B598 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		832FA8211EFEC4870001B598 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		832FA8231EFEC4870001B598 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = E7S72SVH62;
+				INFOPLIST_FILE = EmotionHero/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kalas.EmotionHero;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		832FA8241EFEC4870001B598 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = E7S72SVH62;
+				INFOPLIST_FILE = EmotionHero/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kalas.EmotionHero;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		832FA8051EFEC4860001B598 /* Build configuration list for PBXProject "EmotionHero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				832FA8201EFEC4870001B598 /* Debug */,
+				832FA8211EFEC4870001B598 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		832FA8221EFEC4870001B598 /* Build configuration list for PBXNativeTarget "EmotionHero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				832FA8231EFEC4870001B598 /* Debug */,
+				832FA8241EFEC4870001B598 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 832FA8021EFEC4860001B598 /* Project object */;
+}
