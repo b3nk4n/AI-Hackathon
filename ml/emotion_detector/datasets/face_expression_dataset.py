@@ -13,8 +13,8 @@ CLASSES = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 class FaceExpressionDataset(object):
     def __init__(self, data_root, batch_size,
                  queue_num_threads=8, queue_min_examples=4096):
-        self.data_root = data_root
-        self.batch_size = batch_size
+        self._data_root = data_root
+        self._batch_size = batch_size
         self.queue_num_threads = queue_num_threads
         self.queue_min_examples = queue_min_examples
 
@@ -99,6 +99,14 @@ class FaceExpressionDataset(object):
         tf.summary.image('images', images)
 
         return images, tf.reshape(label_batch, [self.batch_size])
+
+    @property
+    def batch_size(self):
+        return self._batch_size
+
+    @property
+    def data_root(self):
+        return self._data_root
 
 
 class DataExample(object):

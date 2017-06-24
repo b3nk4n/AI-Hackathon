@@ -21,8 +21,9 @@ def train(_):
     """Starts the training. Executed only if run as a script."""
     ph_training = tf.placeholder_with_default(False, [], name='is_training')
     
-    # TODO input
-    batch_images, batch_labels = None
+    with tf.device('/cpu:0') and tf.name_scope('input-pipeline'):
+        dataset = ds.FaceExpressionDataset(FLAGS.data_root, FLAGS.batch_size)
+        batch_images, batch_labels = dataset.inputs(augment_data=True)
 
     with tf.name_scope('inference'):
         classifier = m.DexpressionClassifier(FLAGS.weight_decay,
@@ -110,7 +111,9 @@ if __name__ == '__main__':
                         help='Whether data augmentation (rotate/shift/...) is used or not.')
     PARSER.add_argument('--dataset_check', type=bool, default=False,
                         help='Whether the dataset should be checked only.')
-    PARSER.add_argument('--summary_dir', type=str, default='summary',
+    PARSER.add_argument('--summary_root', type=str, default='summary',
                         help='The root directory for the summaries.')
+    PARSER.add_argument('--data_root', type=str, default='tmp',
+                        help='The root directory of the data.')
     FLAGS, UNPARSED = PARSER.parse_known_args()
     tf.app.run(main=train, argv=[sys.argv[0]] + UNPARSED)
