@@ -35,6 +35,7 @@ class FaceExpressionDataset(object):
 
         image_filenames = tf.convert_to_tensor(class_filenames, dtype=tf.string)
         image_labels = tf.convert_to_tensor(class_labels, dtype=tf.int32)
+        image_labels = tf.one_hot(image_labels, len(CLASSES))
 
         # Create a queue that produces the filenames plus labels to read
         input_queue = tf.train.slice_input_producer([image_filenames, image_labels])
@@ -98,7 +99,7 @@ class FaceExpressionDataset(object):
         # Display the training images in the visualizer.
         tf.summary.image('images', images)
 
-        return images, tf.reshape(label_batch, [self.batch_size])
+        return images, tf.reshape(label_batch, [-1, len(CLASSES)])
 
     @property
     def batch_size(self):

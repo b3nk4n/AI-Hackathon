@@ -27,7 +27,7 @@ with tf.Session() as sess:
             else:
                 # get example using feeding
                 gen_image = np.random.rand(BATCH_SIZE, 48, 48, 3)
-                gen_label = np.ones((BATCH_SIZE,))
+                gen_label = np.ones((BATCH_SIZE, 7))
                 batch_images, batch_labels = sess.run([input_images, input_labels],
                                                       feed_dict={input_images: gen_image,
                                                                  input_labels: gen_label})
