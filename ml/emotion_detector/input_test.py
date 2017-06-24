@@ -4,23 +4,35 @@ from datasets import face_expression_dataset as ds
 
 DATA_ROOT = 'emotions'
 BATCH_SIZE = 4
+TEST_TRAINING = False  # False: test validation
 
-dataset = ds.FaceExpressionDataset(DATA_ROOT, BATCH_SIZE, queue_num_threads=2, queue_min_examples=64)
 
-# dataset info
-print('Batch-size: {}'.format(dataset.batch_size))
-print('Train-size: {}'.format(dataset.train_size))
-print('Valid-size: {}'.format(dataset.valid_size))
+def main():
+    dataset = ds.FaceExpressionDataset(DATA_ROOT, queue_num_threads=2, queue_min_examples=64)
 
-# create input pipeline
-input_images, input_labels = dataset.train_inputs(augment_data=True)
+    # dataset info
+    print('Batch-size: {}'.format(BATCH_SIZE))
+    print('Train-size: {}'.format(dataset.train_size))
+    print('Valid-size: {}'.format(dataset.valid_size))
 
-# Create a session for running operations in the Graph.
-with tf.Session() as sess:
-    # Initialize the variables (like the epoch counter).
-    sess.run(tf.global_variables_initializer())
-    sess.run(tf.local_variables_initializer())
+    # create input pipeline
+    queue_images, queue_labels = dataset.train_inputs(BATCH_SIZE, augment_data=True)
 
+    # Create a session for running operations in the Graph.
+    with tf.Session() as sess:
+        # Initialize the variables (like the epoch counter).
+        sess.run(tf.global_variables_initializer())
+        sess.run(tf.local_variables_initializer())
+
+        if TEST_TRAINING:
+            test_training_input(sess, queue_images, queue_labels)
+        else:
+            test_validation_input(dataset)
+
+        sess.close()
+
+
+def test_training_input(sess, input_images, input_labels):
     # Start input enqueue threads.
     coord = tf.train.Coordinator()
 
@@ -49,4 +61,20 @@ with tf.Session() as sess:
 
     # Wait for threads to finish.
     coord.join(threads)
-    sess.close()
+
+
+def test_validation_input(dataset):
+    while True:
+        dataset.valid_reset()
+
+        num_batches = dataset.valid_size / BATCH_SIZE
+        for step in range(num_batches):
+            batch_x, batch_y = dataset.valid_batch(BATCH_SIZE)
+            print(batch_x.shape, batch_y.shape)
+
+
+if __name__ == '__main__':
+    main()
+
+
+

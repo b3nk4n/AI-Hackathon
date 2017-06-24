@@ -4,18 +4,19 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import cv2
 import numpy as np
 import tensorflow as tf
 import utils.path
+import utils.image
 
 CLASSES = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 
 class FaceExpressionDataset(object):
-    def __init__(self, data_root, batch_size, train_split=0.8,
+    def __init__(self, data_root, train_split=0.8,
                  queue_num_threads=8, queue_min_examples=4096):
         self._data_root = data_root
-        self._batch_size = batch_size
         self.queue_num_threads = queue_num_threads
         self.queue_min_examples = queue_min_examples
 
@@ -24,15 +25,14 @@ class FaceExpressionDataset(object):
         train_data, valid_data = _split_data(all_filenames, all_labels, train_split)
         self.train_filenames = train_data[0]
         self.train_labels = train_data[1]
-        self.valid_filenames = valid_data[0]
-        self.valid_labels = valid_data[1]
+        # self.valid_filenames = valid_data[0]
+        # self.valid_labels = valid_data[1]
 
-    def train_inputs(self, augment_data=False):
+        self._valid_index = 0
+        self.valid_images, self.valid_labels = _load_dataset_into_memory(valid_data[0], valid_data[1])
+
+    def train_inputs(self, batch_size, augment_data=False):
         """Construct distorted input for training using the Reader ops.
-        Args:
-        Returns:
-          images: Images. 4D tensor of [batch_size, IMAGE_SIZE, IMAGE_SIZE, 3] size.
-          labels: Labels. 1D tensor of [batch_size] size.
         """
         image_filenames = tf.convert_to_tensor(self.train_filenames, dtype=tf.string)
         image_labels = tf.convert_to_tensor(self.train_labels, dtype=tf.int32)
@@ -81,9 +81,24 @@ class FaceExpressionDataset(object):
         print('Filling queue with {} images...'.format(self.queue_min_examples))
 
         # Generate a batch of images and labels by building up a queue of examples.
-        return self._generate_image_and_label_batch(processed_image, input_example.label)
+        return self._generate_image_and_label_batch(processed_image, input_example.label,
+                                                    batch_size)
 
-    def _generate_image_and_label_batch(self, image, label):
+    def valid_reset(self):
+        self._valid_index = 0
+
+    def valid_batch(self, valid_batch_size):
+        end_index = self._valid_index + valid_batch_size
+        if end_index > self.valid_size:
+            raise "Validation index out of bounds. Forgot to call valid_reset()?"
+
+        batch_images = self.valid_images[self._valid_index:end_index]
+        batch_labels = self.valid_labels[self._valid_index:end_index]
+        self._valid_index = end_index
+        return batch_images, batch_labels
+
+
+    def _generate_image_and_label_batch(self, image, label, batch_size):
         """Construct a queued batch of images and labels.
         Args:
           image: 3-D Tensor of [height, width, 3] of type.float32.
@@ -94,19 +109,15 @@ class FaceExpressionDataset(object):
         """
         images, label_batch = tf.train.shuffle_batch(
             [image, label],
-            batch_size=self.batch_size,
+            batch_size=batch_size,
             num_threads=self.queue_num_threads,
-            capacity=self.queue_min_examples + 32 * self.batch_size,
+            capacity=self.queue_min_examples + 32 * batch_size,
             min_after_dequeue=self.queue_min_examples)
 
         # Display the training images in the visualizer.
         tf.summary.image('images', images)
 
         return images, tf.reshape(label_batch, [-1, len(CLASSES)])
-
-    @property
-    def batch_size(self):
-        return self._batch_size
 
     @property
     def data_root(self):
@@ -118,7 +129,7 @@ class FaceExpressionDataset(object):
 
     @property
     def valid_size(self):
-        return len(self.valid_filenames)
+        return self.valid_images.shape[0]
 
 
 class DataExample(object):
@@ -235,3 +246,13 @@ def _split_data(filenames_dict, labels_dict, train_split):
 
     return (train_filenames_list, train_labels_list),\
            (valid_filenames_list, valid_labels_list)
+
+
+def _load_dataset_into_memory(filenames, labels):
+    images = []
+    for filename in filenames:
+        image = utils.image.read(filename, cv2.IMREAD_GRAYSCALE)
+        images.append(image)
+
+    return np.asarray(images), np.asarray(labels)
+
