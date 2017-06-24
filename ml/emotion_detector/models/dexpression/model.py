@@ -99,7 +99,7 @@ class DexpressionNet(AbstractModel):
     def HP_MP_PADDING_TYPE(self):
         return self.__HP_PADDING_TYPE
 
-    def __init__(self, weight_decay, hyper_params, n_classes):
+    def __init__(self, weight_decay, hyper_params):
         super(DexpressionNet, self).__init__(weight_decay)
 
         # some mappings to constant strings that are used to pass the hyper-paramers (HP) for the model
@@ -118,7 +118,6 @@ class DexpressionNet(AbstractModel):
         # self.HP_MP_STRIDES = self.HP_CONV_STRIDES = 'strides'
 
         self.hyper_params = hyper_params
-        self.n_classes = n_classes
 
         # will bet set in the inference()
         self._classifier = None
@@ -292,7 +291,7 @@ class DexpressionNet(AbstractModel):
             fc_1 = self.__dropout(fc_1, 'fc_1')
 
         # classification layer
-        self._classifier = self.__fully_connected(fc_1, 'out', self.n_classes)
+        self._classifier = self.__fully_connected(fc_1, 'out', labels.get_shape().as_list()[-1])
 
         return self._classifier
 
