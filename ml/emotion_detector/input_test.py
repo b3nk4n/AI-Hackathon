@@ -6,7 +6,14 @@ DATA_ROOT = 'tmp'
 BATCH_SIZE = 4
 
 dataset = ds.FaceExpressionDataset(DATA_ROOT, BATCH_SIZE, queue_num_threads=2, queue_min_examples=64)
-input_images, input_labels = dataset.inputs(augment_data=True)
+
+# dataset info
+print('Batch-size: {}'.format(dataset.batch_size))
+print('Train-size: {}'.format(dataset.train_size))
+print('Valid-size: {}'.format(dataset.valid_size))
+
+# create input pipeline
+input_images, input_labels = dataset.train_inputs(augment_data=True)
 
 # Create a session for running operations in the Graph.
 with tf.Session() as sess:
