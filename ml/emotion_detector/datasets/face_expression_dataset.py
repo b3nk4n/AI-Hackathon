@@ -4,8 +4,10 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-
 import tensorflow as tf
+import utils.path
+
+CLASSES = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 
 class FaceExpressionDataset(object):
@@ -23,52 +25,53 @@ class FaceExpressionDataset(object):
           images: Images. 4D tensor of [batch_size, IMAGE_SIZE, IMAGE_SIZE, 3] size.
           labels: Labels. 1D tensor of [batch_size] size.
         """
-        filenames = tf.train.match_filenames_once(os.path.join(self.data_root, '*.jpg'))
+        class_filenames = []
+        class_labels = []
+        for class_id, class_name in enumerate(CLASSES):
+            filenames = utils.path.get_filenames(os.path.join(self.data_root, class_name), '*.jpg')
+            for fname in filenames:
+                class_filenames.append(fname)
+                class_labels.append(class_id)
 
-        for f in filenames:
-            if not tf.gfile.Exists(f):
-                raise ValueError('Failed to find file: ' + f)
+        image_filenames = tf.convert_to_tensor(class_filenames, dtype=tf.string)
+        image_labels = tf.convert_to_tensor(class_labels, dtype=tf.int32)
 
-        # Create a queue that produces the filenames to read
-        filename_queue = tf.train.string_input_producer(filenames)
+        # Create a queue that produces the filenames plus labels to read
+        input_queue = tf.train.slice_input_producer([image_filenames, image_labels])
 
         # Read examples from files in the filename queue
         input_example = DataExample(48, 48, 3)
-        input_example.read_example(filename_queue)
-        reshaped_image = tf.cast(input_example.image, tf.float32)
+        input_example.read_example(input_queue)
+        result_image = tf.cast(input_example.image, tf.float32)
 
         if augment_data:
             # Image processing for training the network
 
             # Randomly crop a [height, width] section of the image
-            distorted_image = tf.random_crop(reshaped_image,
-                                             [input_example.height, input_example.width, 3])  # TODO no crop? crop center?
+            result_image = tf.random_crop(result_image,
+                                          [input_example.height, input_example.width, 3])  # TODO do crop? crop center?
 
             # Randomly flip the image horizontally.
-            distorted_image = tf.image.random_flip_left_right(distorted_image)
+            result_image = tf.image.random_flip_left_right(result_image)
 
             # Because these operations are not commutative, consider randomizing
             # the order their operation
             # NOTE: since per_image_standardization zeros the mean and makes
             # the stddev unit, this likely has no effect see tensorflow#1458
-            distorted_image = tf.image.random_brightness(distorted_image,
-                                                         max_delta=50)
-            distorted_image = tf.image.random_contrast(distorted_image,
-                                                       lower=0.5, upper=1.5)
+            result_image = tf.image.random_brightness(result_image,
+                                                      max_delta=50)
+            result_image = tf.image.random_contrast(result_image,
+                                                    lower=0.5, upper=1.5)
             # Limit pixel values to [0, 1]
-            distorted_image = tf.minimum(distorted_image, 1.0)
-            result_image = tf.maximum(distorted_image, 0.0)
+            result_image = tf.minimum(result_image, 1.0)
+            result_image = tf.maximum(result_image, 0.0)
         else:
             # Crop the central [height, width] of the image
-            result_image = tf.image.resize_image_with_crop_or_pad(reshaped_image,
+            result_image = tf.image.resize_image_with_crop_or_pad(result_image,
                                                                   input_example.height, input_example.width)
 
         # Subtract off the mean and divide by the variance of the pixels
         processed_image = tf.image.per_image_standardization(result_image)
-
-        # Set the shapes of tensors
-        processed_image.set_shape([input_example.height, input_example.width, 3])
-        input_example.label.set_shape([1])
 
         # Ensure that the random shuffling has good mixing properties
         print('Filling queue with {} images...'.format(self.queue_min_examples))
@@ -108,14 +111,14 @@ class DataExample(object):
         self._image = None
         self._label = None
 
-    def read_example(self, filename_queue):
+    def read_example(self, input_queue):
         """Reads and parses examples from the data files.
         Recommendation: if you want N-way read parallelism, call this function
         N times.  This will give you N independent Readers reading different
         files & positions within those files, which will give better mixing of
         examples.
         Args:
-          filename_queue: A queue of strings with the filenames to read from.
+          input_queue: An input queue of (strings, int) with the filenames plus label to read from.
         Returns:
           An object representing a single example, with the following fields:
             height: number of rows in the record (48)
@@ -127,35 +130,30 @@ class DataExample(object):
             image: a [height, width, depth] uint8 Tensor with the image data
         """
         # Read a record, getting filenames from the filename_queue
-        reader = tf.WholeFileReader()
-        _, value = reader.read(filename_queue)
+        file_contents = tf.read_file(input_queue[0])
 
         # Decode the image
-        self._image = tf.image.decode_png(value)
+        self._image = tf.image.decode_jpeg(file_contents)
 
         # Decode the label
-        self._label = 0  # TODO how to get the label, when this is implicitely encoded in the path (folder name)
+        self._label = input_queue[1]
 
     @property
     def height(self):
-        return self.height
+        return self._height
 
     @property
     def width(self):
-        return self.width
+        return self._width
 
     @property
     def depth(self):
-        return self.depth
-
-    @property
-    def depth(self):
-        return self.depth
+        return self._depth
 
     @property
     def image(self):
-        return self.image
+        return self._image
 
     @property
     def label(self):
-        return self.label
+        return self._label
