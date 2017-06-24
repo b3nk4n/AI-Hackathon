@@ -32,7 +32,7 @@ def train(_):
 
     with tf.name_scope('loss-layer'):
         loss_op = classifier.loss(predictions, batch_labels)
-        total_loss_op = classifier.total_loss(loss_op, predictions, batch_labels)
+        total_loss_op = classifier.total_loss(loss_op)
 
     with tf.name_scope('optimizer'):
         train_op = tf.train.AdamOptimizer(FLAGS.learning_rate).minimize(total_loss_op)
