@@ -144,8 +144,8 @@ class DexpressionNet(AbstractModel):
             n_outs,
             kernel_regularizer=regularizer,
             kernel_initializer=tf.contrib.layers.xavier_initializer(),
+            activation=activation_fn,
             # default
-            activation=None,
             use_bias=True,
             bias_initializer=tf.zeros_initializer(),
             bias_regularizer=None,
