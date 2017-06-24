@@ -26,8 +26,8 @@ def train(_):
         batch_images, batch_labels = dataset.inputs(augment_data=True)
 
     with tf.name_scope('inference'):
-        classifier = m.DexpressionClassifier(FLAGS.weight_decay,
-                                             hyper_params=None)  # TODO hyperparams
+        classifier = m.DexpressionNet(FLAGS.weight_decay,
+                                      hyper_params=None)  # TODO hyperparams
         predictions = classifier.inference(batch_images, batch_labels, ph_training)
 
     with tf.name_scope('loss-layer'):
