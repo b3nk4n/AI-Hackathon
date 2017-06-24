@@ -81,7 +81,7 @@ dexpression_hp_2406_1100 = {
     DN.HP_FC: {
         # this one is not in the original dexepression
         'fc_1': {
-            DN.HP_FC_N_OUTPUTS: 128,
+            DN.HP_FC_N_OUTPUTS: 256,
             DN.HP_FC_DROPOUT_RATE: 0.5
         },
         'out': {
