@@ -65,13 +65,13 @@ class FaceExpressionDataset(object):
             # the order their operation
             # NOTE: since per_image_standardization zeros the mean and makes
             # the stddev unit, this likely has no effect see tensorflow#1458
-            result_image = tf.image.random_brightness(result_image,
-                                                      max_delta=10)
-            result_image = tf.image.random_contrast(result_image,
-                                                    lower=0.9, upper=1.1)
+            #result_image = tf.image.random_brightness(result_image,
+            #                                          max_delta=10)
+            #result_image = tf.image.random_contrast(result_image,
+            #                                        lower=0.9, upper=1.1)
             # Limit pixel values to [0, 1]
-            result_image = tf.minimum(result_image, 1.0)
-            result_image = tf.maximum(result_image, 0.0)
+            #result_image = tf.minimum(result_image, 1.0)
+            #result_image = tf.maximum(result_image, 0.0)
         else:
             # Crop the central [height, width] of the image
             result_image = tf.image.resize_image_with_crop_or_pad(result_image,
@@ -266,4 +266,4 @@ def _load_dataset_into_memory(filenames, labels):
 
 def _normalize_image(image):
     """Normalizes the image from [0, 255] to [-1, 1] with simple linear scaling."""
-    return (image / 227.5) - 1.0
+    return (image / 127.5) - 1.0
