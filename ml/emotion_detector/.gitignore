@@ -1,4 +1,5 @@
 emotions/
+emotions_split/
 summary/
 checkpoint/
 *.h5

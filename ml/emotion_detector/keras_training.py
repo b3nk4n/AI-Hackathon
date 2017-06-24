@@ -38,7 +38,7 @@ train_generator = train_datagen.flow_from_directory(
 
 # this is a similar generator, for validation data
 validation_generator = test_datagen.flow_from_directory(
-        'emotions_split/test',
+        'emotions_split/validation',
         target_size=(image_size, image_size),
         color_mode='grayscale',
         batch_size=batch_size,
