@@ -175,10 +175,7 @@ class DexpressionNet(AbstractModel):
             beta_regularizer=None,
             gamma_regularizer=None,
             trainable=True,
-            reuse=None,
-            renorm=False,
-            renorm_clipping=None,
-            renorm_momentum=0.99
+            reuse=None
         )
         return batch_norm
 
