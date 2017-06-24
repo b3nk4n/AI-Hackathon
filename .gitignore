@@ -102,3 +102,6 @@ ENV/
 
 # AI-Hackathon specific
 data/
+
+# PyChars
+.idea/
