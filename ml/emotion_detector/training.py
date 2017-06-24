@@ -26,7 +26,8 @@ def train(_):
     ph_training = tf.placeholder_with_default(False, [], name='is_training')
     
     with tf.device('/cpu:0') and tf.name_scope('input-pipeline'):
-        dataset = ds.FaceExpressionDataset(FLAGS.data_root)
+        dataset = ds.FaceExpressionDataset(FLAGS.data_root,
+                                           file_pattern=FLAGS.file_pattern)
         batch_images, batch_labels = dataset.train_inputs(FLAGS.batch_size,
                                                           augment_data=FLAGS.augment_data)
 
@@ -171,5 +172,7 @@ if __name__ == '__main__':
                         help='The path to the checkpoint to restore.')
     PARSER.add_argument('--data_root', type=str, default='emotions',
                         help='The root directory of the data.')
+    PARSER.add_argument('--file_pattern', type=str, default='*.png',
+                        help='The file pattern of the image data to load.')
     FLAGS, UNPARSED = PARSER.parse_known_args()
     tf.app.run(main=train, argv=[sys.argv[0]] + UNPARSED)
