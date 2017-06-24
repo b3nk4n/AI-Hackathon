@@ -123,14 +123,14 @@ def train(_):
                 valid_writer.add_summary(summary, gstep)
                 valid_writer.flush()
 
-                # if FLAGS.save_checkpoint:
-                #    checkpoint_dir = 'checkpoint'  # FIXME different runs would override the same checkpoint!
-                #    if not os.path.isdir(checkpoint_dir):
-                #        os.makedirs(checkpoint_dir)
-                #    # save checkpoint
-                #    logging.info('Saving checkpoint...')
-                #    save_path = saver.save(sess, os.path.join(checkpoint_dir, 'model.ckpt'))
-                #    logging.info('Model saved in file: {}'.format(save_path))
+                # Save the variables to disk
+                # FIXME different runs would override the same checkpoint!
+                checkpoint_dir = FLAGS.checkpoint_root
+                if not os.path.isdir(checkpoint_dir):
+                    os.makedirs(checkpoint_dir)
+
+                save_path = saver.save(sess, os.path.join(checkpoint_dir, 'model.ckpt'), global_step)
+                logging.info("Model saved in file: {}".format(save_path))
 
         except tf.errors.OutOfRangeError:
             logging.info('Done training -- epoch limit reached')
@@ -161,6 +161,8 @@ if __name__ == '__main__':
                         help='Whether the dataset should be checked only.')
     PARSER.add_argument('--summary_root', type=str, default='summary',
                         help='The root directory for the summaries.')
+    PARSER.add_argument('--checkpoint_root', type=str, default='checkpoint',
+                        help='The root directory for the checkpoints.')
     PARSER.add_argument('--data_root', type=str, default='emotions',
                         help='The root directory of the data.')
     FLAGS, UNPARSED = PARSER.parse_known_args()
