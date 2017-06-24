@@ -8,6 +8,7 @@ import argparse
 import tensorflow as tf
 
 from models import dexpression as m
+from models.dexpression.conf import dex_hyper_params as hyper_params
 from datasets import face_expression_dataset as ds
 import utils.tensor
 
@@ -27,7 +28,7 @@ def train(_):
 
     with tf.name_scope('inference'):
         classifier = m.DexpressionNet(FLAGS.weight_decay,
-                                      hyper_params=None)  # TODO hyperparams
+                                      hyper_params=hyper_params)
         predictions = classifier.inference(batch_images, batch_labels, ph_training)
 
     with tf.name_scope('loss-layer'):
