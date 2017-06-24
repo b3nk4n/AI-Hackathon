@@ -55,8 +55,8 @@ if __name__ == '__main__':
             base_dir = sys.argv[2]
             
 
-        if mode == 'kaggle':
-            classifier_structure()
+        # if mode == 'kaggle':
+            # classifier_structure()
     
         else:
             print('Unknown mode')

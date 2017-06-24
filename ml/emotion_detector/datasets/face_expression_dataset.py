@@ -19,7 +19,7 @@ class FaceExpressionDataset(object):
         self.queue_num_threads = queue_num_threads
         self.queue_min_examples = queue_min_examples
 
-        all_filenames, all_labels = _read_files(data_root, '*.jpg')
+        all_filenames, all_labels = _read_files(data_root, '*.png')
 
         train_data, valid_data = _split_data(all_filenames, all_labels, train_split)
         self.train_filenames = train_data[0]
@@ -42,7 +42,7 @@ class FaceExpressionDataset(object):
         input_queue = tf.train.slice_input_producer([image_filenames, image_labels])
 
         # Read examples from files in the filename queue
-        input_example = DataExample(48, 48, 3)
+        input_example = DataExample(48, 48, 1)
         input_example.read_example(input_queue)
         result_image = tf.cast(input_example.image, tf.float32)
 
@@ -51,7 +51,9 @@ class FaceExpressionDataset(object):
 
             # Randomly crop a [height, width] section of the image
             result_image = tf.random_crop(result_image,
-                                          [input_example.height, input_example.width, 3])  # TODO do crop? crop center?
+                                          [input_example.height,
+                                           input_example.width,
+                                           input_example.depth])  # TODO do crop? crop center?
 
             # Randomly flip the image horizontally.
             result_image = tf.image.random_flip_left_right(result_image)
@@ -151,7 +153,7 @@ class DataExample(object):
         file_contents = tf.read_file(input_queue[0])
 
         # Decode the image
-        self._image = tf.image.decode_jpeg(file_contents)
+        self._image = tf.image.decode_png(file_contents)
 
         # Decode the label
         self._label = input_queue[1]

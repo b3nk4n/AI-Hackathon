@@ -102,7 +102,7 @@ class KaggleFacialExpression(object):
         try:
             if self._build_meta_version:
                 print("meta: ", self.home(filename))
-                meta = cPickle.load(open(self.home(filename))
+                meta = cPickle.load(open(self.home(filename)))
             else:
                 raise IOError()
         except (IOError, cPickle.PickleError) as e:

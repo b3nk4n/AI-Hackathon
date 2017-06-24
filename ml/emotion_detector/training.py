@@ -49,50 +49,69 @@ def train(_):
         sess.run(tf.global_variables_initializer())
         print('Model with {} trainable parameters.'.format(utils.tensor.get_num_trainable_params()))
 
-        print('Start training...')
-        step = 1
-        loss_sum = loss_n = 0
+        # Start input enqueue threads
+        coord = tf.train.Coordinator()
+        threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-        for epoch in range(FLAGS.train_epochs):
-            print('Starting epoch {} / {}...'.format(epoch + 1, FLAGS.train_epochs))
-            sess.run(tf.local_variables_initializer())
+        try:
+            print('Start training...')
+            step = 0
+            epoch = 0
+            loss_sum = loss_n = 0
 
-            num_batches = 0 # TODO calc number of batches
-            for b in range(num_batches):
-                # TODO get next train batch and feed it, or use the queue
-                
-                _, loss, summary = sess.run([train_op, loss_op, summary_op],
-                                            feed_dict={})
+            while not coord.should_stop():
+                epoch += 1
 
-                loss_sum += loss
-                loss_n += 1
+                if epoch > FLAGS.train_epochs:
+                    break
 
-                if step % 10 == 0:
-                    loss_avg = loss_sum / loss_n
-                    print('Step {:3d} with loss: {:.5f}'.format(step, loss_avg))
-                    loss_sum = loss_n = 0
-                    # write to summary
-                    train_writer.add_summary(summary, step)
-                    train_writer.flush()
+                print('Starting epoch {} / {}...'.format(epoch, FLAGS.train_epochs))
+                sess.run(tf.local_variables_initializer())
 
-                step += 1
+                num_batches = int(dataset.train_size / dataset.batch_size)
+                for b in range(num_batches):
+                    step += 1
 
-            # validation step
-            # TODO get next train batch and feed it, or use the queue, and use a loop in case we cannot read all data at once
-            loss, summary = sess.run([loss_op, summary_op], 
-                                     feed_dict={})
-            print('VALIDATION > Step {:3d} with loss: {:.5f}'.format(step, loss))
-            valid_writer.add_summary(summary, step)
-            valid_writer.flush()
+                    _, loss, summary = sess.run([train_op, loss_op, summary_op],
+                                                feed_dict={ph_training: True})
 
-        if FLAGS.save_checkpoint:
-            checkpoint_dir = 'checkpoint' # FIXME different runs would override the same checkpoint!
-            if not os.path.isdir(checkpoint_dir):
-                os.makedirs(checkpoint_dir)
-            # save checkpoint
-            print('Saving checkpoint...')
-            save_path = saver.save(sess, os.path.join(checkpoint_dir, 'model.ckpt'))
-            print('Model saved in file: {}'.format(save_path))
+                    loss_sum += loss
+                    loss_n += 1
+
+                    if step % 10 == 0:
+                        loss_avg = loss_sum / loss_n
+                        print('Step {:3d} with loss: {:.5f}'.format(step, loss_avg))
+                        loss_sum = loss_n = 0
+                        # write to summary
+                        train_writer.add_summary(summary, step)
+                        train_writer.flush()
+
+                # validation step
+                # TODO get next train batch and feed it, or use the queue, and use a loop in case we cannot read all data at once
+                # loss, summary = sess.run([loss_op, summary_op],
+                #                         feed_dict={})
+                # print('VALIDATION > Step {:3d} with loss: {:.5f}'.format(step, loss))
+                # valid_writer.add_summary(summary, step)
+                # valid_writer.flush()
+
+                # if FLAGS.save_checkpoint:
+                #    checkpoint_dir = 'checkpoint'  # FIXME different runs would override the same checkpoint!
+                #    if not os.path.isdir(checkpoint_dir):
+                #        os.makedirs(checkpoint_dir)
+                #    # save checkpoint
+                #    print('Saving checkpoint...')
+                #    save_path = saver.save(sess, os.path.join(checkpoint_dir, 'model.ckpt'))
+                #    print('Model saved in file: {}'.format(save_path))
+
+        except tf.errors.OutOfRangeError:
+            print('Done training -- epoch limit reached')
+        finally:
+            # When done, ask the threads to stop.
+            coord.request_stop()
+
+        # Wait for threads to finish.
+        coord.join(threads)
+        sess.close()
 
 
 if __name__ == '__main__':
@@ -113,7 +132,7 @@ if __name__ == '__main__':
                         help='Whether the dataset should be checked only.')
     PARSER.add_argument('--summary_root', type=str, default='summary',
                         help='The root directory for the summaries.')
-    PARSER.add_argument('--data_root', type=str, default='tmp',
+    PARSER.add_argument('--data_root', type=str, default='emotions',
                         help='The root directory of the data.')
     FLAGS, UNPARSED = PARSER.parse_known_args()
     tf.app.run(main=train, argv=[sys.argv[0]] + UNPARSED)
