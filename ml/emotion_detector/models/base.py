@@ -54,19 +54,13 @@ class AbstractModel(object):
         """
         pass
     
-    def total_loss(self, loss, predictions, targets, device_scope=None):
+    def total_loss(self, loss):
         """Gets the total loss of the model including the regularization losses.
            Implemented as a lazy property.
         Parameters
         ----------
         loss: float32 Tensor
             The result of loss(predictions, targets) that should be included in this loss.
-        predictions: n-D Tensor
-            The predictions of the model.
-        targets: n-D Tensor
-            The targets/labels.
-        device_scope: str or None, optional
-            The tower name in case of multi-GPU runs.
         Returns
         ----------
         Returns the total loss as a float.
@@ -127,24 +121,19 @@ class AbstractModel(object):
     
     def print_params(self):
         """Shows the model parameters."""
-        params = self.__getstate__()
+        params = self.__dict__.copy()
         
         def trim_prefix(text, prefix):
             return text[text.startswith(prefix) and len(prefix):]
         
-        def to_string(value):
-            if isinstance(value, types.FunctionType):
-                return value.__name__.upper()
-            return value
+        def to_string(_value):
+            if isinstance(_value, types.FunctionType):
+                return _value.__name__.upper()
+            return _value
 
         print(">>> Model:")
-        for name, value in params.iteritems():
+        for name, value in params.items():
             print("{:16}  ->  {}".format(trim_prefix(name, '_'), to_string(value)))
-
-    @property
-    def batch_size(self):
-        """Gets the dynamic shape of the batch size."""
-        return tf.shape(self._inputs)[0]
     
     @property
     def weight_decay(self):
