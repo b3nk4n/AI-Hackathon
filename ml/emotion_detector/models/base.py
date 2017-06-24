@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import
+
 import os
 import types
 import jsonpickle
@@ -53,7 +57,7 @@ class AbstractModel(object):
         Returns the loss as a float.
         """
         pass
-    
+
     def total_loss(self, loss):
         """Gets the total loss of the model including the regularization losses.
            Implemented as a lazy property.
