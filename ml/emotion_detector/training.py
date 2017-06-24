@@ -51,7 +51,7 @@ def train(_):
 
     with tf.name_scope('optimizer'):
         update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-        print("Found {} update ops.".format(len(update_ops)))
+        logging.info("Found {} update ops.".format(len(update_ops)))
         with tf.control_dependencies(update_ops):
             optimizer = tf.train.AdamOptimizer(FLAGS.learning_rate)
             train_op = optimizer.minimize(total_loss_op,
@@ -126,10 +126,11 @@ def train(_):
                     loss_sum += loss
                     acc_sum += acc
 
-                gstep = sess.run(global_step)
+                gstep, summary = sess.run([global_step, summary_op])
                 loss_avg = loss_sum / num_batches
                 acc_avg = acc_sum / num_batches
                 logging.info('VALIDATION > Step {:3d} with loss: {:.5f}, acc: {:.5f}'.format(gstep, loss_avg, acc_avg))
+                loss_sum = acc_sum = 0.0
                 valid_writer.add_summary(summary, gstep)
                 valid_writer.flush()
 
