@@ -2,7 +2,7 @@
 
 https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data
 
-* 7 emotions (Angry, Digust, Fear, Happy, Sad, Surprise, Neutral)
+* 7 emotions (Angry, Disgust, Fear, Happy, Sad, Surprise, Neutral)
 * 48 x 48 Pixels
 * Training Set: 28,709
 * Test Set: 3,589

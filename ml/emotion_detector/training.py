@@ -7,8 +7,8 @@ import argparse
 
 import tensorflow as tf
 
-import models
-import datasets
+from models import dexpression as m
+from datasets import face_expression_dataset as ds
 import utils.tensor
 
 FLAGS = None
@@ -19,15 +19,23 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 def train(_):
     """Starts the training. Executed only if run as a script."""
+    ph_training = tf.placeholder_with_default(False, [], name='is_training')
     
-    # TODO input
-    
-    # TODO model
-    
-    # TODO loss
-    loss_op = None
-    
-    train_op = tf.train.AdamOptimizer(FLAGS.learning_rate).minimize(loss_)
+    with tf.device('/cpu:0') and tf.name_scope('input-pipeline'):
+        dataset = ds.FaceExpressionDataset(FLAGS.data_root, FLAGS.batch_size)
+        batch_images, batch_labels = dataset.inputs(augment_data=True)
+
+    with tf.name_scope('inference'):
+        classifier = m.DexpressionClassifier(FLAGS.weight_decay,
+                                             hyper_params=None)  # TODO hyperparams
+        predictions = classifier.inference(batch_images, batch_labels, ph_training)
+
+    with tf.name_scope('loss-layer'):
+        loss_op = classifier.loss(predictions, batch_labels)
+        total_loss_op = classifier.total_loss(loss_op, predictions, batch_labels)
+
+    with tf.name_scope('optimizer'):
+        train_op = tf.train.AdamOptimizer(FLAGS.learning_rate).minimize(total_loss_op)
     
     saver = tf.train.Saver()
 
@@ -35,8 +43,8 @@ def train(_):
 
     with tf.Session() as sess:
        
-        train_writer = tf.summary.FileWriter(os.path.join(summary_dir, 'training'), sess.graph)
-        valid_writer = tf.summary.FileWriter(os.path.join(summary_dir, 'validation'))
+        train_writer = tf.summary.FileWriter(os.path.join(FLAGS.summary_dir, 'training'), sess.graph)
+        valid_writer = tf.summary.FileWriter(os.path.join(FLAGS.summary_dir, 'validation'))
 
         sess.run(tf.global_variables_initializer())
         print('Model with {} trainable parameters.'.format(utils.tensor.get_num_trainable_params()))
@@ -103,5 +111,9 @@ if __name__ == '__main__':
                         help='Whether data augmentation (rotate/shift/...) is used or not.')
     PARSER.add_argument('--dataset_check', type=bool, default=False,
                         help='Whether the dataset should be checked only.')
+    PARSER.add_argument('--summary_root', type=str, default='summary',
+                        help='The root directory for the summaries.')
+    PARSER.add_argument('--data_root', type=str, default='tmp',
+                        help='The root directory of the data.')
     FLAGS, UNPARSED = PARSER.parse_known_args()
     tf.app.run(main=train, argv=[sys.argv[0]] + UNPARSED)
