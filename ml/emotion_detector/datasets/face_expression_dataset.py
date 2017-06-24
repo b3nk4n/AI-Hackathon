@@ -14,19 +14,17 @@ CLASSES = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 
 class FaceExpressionDataset(object):
-    def __init__(self, data_root, train_split=0.8,
+    def __init__(self, data_root, train_split=0.8, file_pattern='*.png',
                  queue_num_threads=8, queue_min_examples=4096):
         self._data_root = data_root
         self.queue_num_threads = queue_num_threads
         self.queue_min_examples = queue_min_examples
 
-        all_filenames, all_labels = _read_files(data_root, '*.png')
+        all_filenames, all_labels = _read_files(data_root, file_pattern)
 
         train_data, valid_data = _split_data(all_filenames, all_labels, train_split)
         self.train_filenames = train_data[0]
         self.train_labels = train_data[1]
-        # self.valid_filenames = valid_data[0]
-        # self.valid_labels = valid_data[1]
 
         self._valid_index = 0
         self.valid_images, self.valid_labels = _load_dataset_into_memory(valid_data[0], valid_data[1])
@@ -72,10 +70,10 @@ class FaceExpressionDataset(object):
             # Limit pixel values to [0, 1]
             #result_image = tf.minimum(result_image, 1.0)
             #result_image = tf.maximum(result_image, 0.0)
-        else:
+        ##else:
             # Crop the central [height, width] of the image
-            result_image = tf.image.resize_image_with_crop_or_pad(result_image,
-                                                                  input_example.height, input_example.width)
+            #result_image = tf.image.resize_image_with_crop_or_pad(result_image,
+            #                                                      input_example.height, input_example.width)
 
         result_image.set_shape([input_example.height, input_example.width, input_example.depth])
         # Subtract off the mean and divide by the variance of the pixels
