@@ -3,14 +3,14 @@
 from __future__ import absolute_import
 
 import logging
+import coloredlogs
 
 import tensorflow as tf
 
 from models.base import AbstractModel
 
-
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+coloredlogs.install(level='INFO')
 
 
 class DexpressionNet(AbstractModel):
