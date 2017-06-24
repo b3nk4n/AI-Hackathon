@@ -46,17 +46,9 @@ def kaggle_structure():
 
 if __name__ == '__main__':
 
-    if len(sys.argv) < 2:
+    kaggle_file = os.path.join(os.getcwd(), 'raw', 'fer2013.tar')
+
+    if os.path.exists(kaggle_file):
         kaggle_structure()
     else:
-        mode = sys.argv[1]
-
-        if len(sys.argv) > 2:
-            base_dir = sys.argv[2]
-            
-
-        # if mode == 'kaggle':
-            # classifier_structure()
-    
-        else:
-            print('Unknown mode')
+        print("kaggle file (fer2013.tar) couldn't be found in raw/")
