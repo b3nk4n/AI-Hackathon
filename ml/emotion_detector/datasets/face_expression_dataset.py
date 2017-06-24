@@ -4,6 +4,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import numpy as np
 import tensorflow as tf
 import utils.path
 
@@ -11,36 +12,37 @@ CLASSES = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 
 class FaceExpressionDataset(object):
-    def __init__(self, data_root, batch_size,
+    def __init__(self, data_root, batch_size, train_split=0.8,
                  queue_num_threads=8, queue_min_examples=4096):
         self._data_root = data_root
         self._batch_size = batch_size
         self.queue_num_threads = queue_num_threads
         self.queue_min_examples = queue_min_examples
 
-    def inputs(self, augment_data=False):
+        all_filenames, all_labels = _read_files(data_root, '*.png')
+
+        train_data, valid_data = _split_data(all_filenames, all_labels, train_split)
+        self.train_filenames = train_data[0]
+        self.train_labels = train_data[1]
+        self.valid_filenames = valid_data[0]
+        self.valid_labels = valid_data[1]
+
+    def train_inputs(self, augment_data=False):
         """Construct distorted input for training using the Reader ops.
         Args:
         Returns:
           images: Images. 4D tensor of [batch_size, IMAGE_SIZE, IMAGE_SIZE, 3] size.
           labels: Labels. 1D tensor of [batch_size] size.
         """
-        class_filenames = []
-        class_labels = []
-        for class_id, class_name in enumerate(CLASSES):
-            filenames = utils.path.get_filenames(os.path.join(self.data_root, class_name), '*.jpg')
-            for fname in filenames:
-                class_filenames.append(fname)
-                class_labels.append(class_id)
-
-        image_filenames = tf.convert_to_tensor(class_filenames, dtype=tf.string)
-        image_labels = tf.convert_to_tensor(class_labels, dtype=tf.int32)
+        image_filenames = tf.convert_to_tensor(self.train_filenames, dtype=tf.string)
+        image_labels = tf.convert_to_tensor(self.train_labels, dtype=tf.int32)
+        image_labels = tf.one_hot(image_labels, len(CLASSES))
 
         # Create a queue that produces the filenames plus labels to read
         input_queue = tf.train.slice_input_producer([image_filenames, image_labels])
 
         # Read examples from files in the filename queue
-        input_example = DataExample(48, 48, 3)
+        input_example = DataExample(48, 48, 1)
         input_example.read_example(input_queue)
         result_image = tf.cast(input_example.image, tf.float32)
 
@@ -49,7 +51,9 @@ class FaceExpressionDataset(object):
 
             # Randomly crop a [height, width] section of the image
             result_image = tf.random_crop(result_image,
-                                          [input_example.height, input_example.width, 3])  # TODO do crop? crop center?
+                                          [input_example.height,
+                                           input_example.width,
+                                           input_example.depth])  # TODO do crop? crop center?
 
             # Randomly flip the image horizontally.
             result_image = tf.image.random_flip_left_right(result_image)
@@ -98,7 +102,7 @@ class FaceExpressionDataset(object):
         # Display the training images in the visualizer.
         tf.summary.image('images', images)
 
-        return images, tf.reshape(label_batch, [self.batch_size])
+        return images, tf.reshape(label_batch, [-1, len(CLASSES)])
 
     @property
     def batch_size(self):
@@ -107,6 +111,14 @@ class FaceExpressionDataset(object):
     @property
     def data_root(self):
         return self._data_root
+
+    @property
+    def train_size(self):
+        return len(self.train_filenames)
+
+    @property
+    def valid_size(self):
+        return len(self.valid_filenames)
 
 
 class DataExample(object):
@@ -141,7 +153,7 @@ class DataExample(object):
         file_contents = tf.read_file(input_queue[0])
 
         # Decode the image
-        self._image = tf.image.decode_jpeg(file_contents)
+        self._image = tf.image.decode_png(file_contents)
 
         # Decode the label
         self._label = input_queue[1]
@@ -165,3 +177,61 @@ class DataExample(object):
     @property
     def label(self):
         return self._label
+
+
+def _read_files(root, file_pattern):
+    all_filenames = {}
+    all_labels = {}
+    for class_id, class_name in enumerate(CLASSES):
+        class_filenames = []
+        class_labels = []
+        filenames = utils.path.get_filenames(os.path.join(root, class_name), file_pattern)
+        for fname in filenames:
+            class_filenames.append(fname)
+            class_labels.append(class_id)
+        all_filenames[class_name] = class_filenames
+        all_labels[class_name] = class_labels
+
+    return all_filenames, all_labels
+
+
+def _split_data(filenames_dict, labels_dict, train_split):
+    """Splits the data into train and test set.
+    Args:
+        filenames: List of filenames with shape [class, filenames]
+        labels: List of labels with shape [class, label]
+        train_split: The size of the train split. The validation data
+                     is then 1 - train_split. 
+    """
+    train_filenames_list = []
+    train_labels_list = []
+    valid_filenames_list = []
+    valid_labels_list = []
+
+    for class_name in CLASSES:
+            filenames = filenames_dict[class_name]
+            labels = labels_dict[class_name]
+
+            size = len(filenames)
+            np_filenames = np.asarray(filenames, dtype=object)
+            np_labels = np.asarray(labels)
+
+            # shuffle
+            perm = np.random.permutation(size)
+            np_filenames = np_filenames[perm]
+            np_labels = np_labels[perm]
+
+            # split
+            np_train_filenames = np_filenames[:int(size * train_split)]
+            np_train_labels = np_labels[:int(size * train_split)]
+            np_valid_filenames = np_filenames[int(size * train_split):]
+            np_valid_labels = np_labels[int(size * train_split):]
+
+            # add data to the train/valid list
+            train_filenames_list += np_train_filenames.tolist()
+            train_labels_list += np_train_labels.tolist()
+            valid_filenames_list += np_valid_filenames.tolist()
+            valid_labels_list += np_valid_labels.tolist()
+
+    return (train_filenames_list, train_labels_list),\
+           (valid_filenames_list, valid_labels_list)

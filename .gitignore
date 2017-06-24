@@ -103,6 +103,7 @@ ENV/
 # AI-Hackathon specific
 data/
 tmp/
+ml/emotion_detector/raw/
 
 # PyChars
 .idea/
