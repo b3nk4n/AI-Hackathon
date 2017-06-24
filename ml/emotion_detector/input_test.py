@@ -67,7 +67,7 @@ def test_validation_input(dataset):
     while True:
         dataset.valid_reset()
 
-        num_batches = dataset.valid_size / BATCH_SIZE
+        num_batches = int(dataset.valid_size / BATCH_SIZE)
         for step in range(num_batches):
             batch_x, batch_y = dataset.valid_batch(BATCH_SIZE)
             print(batch_x.shape, batch_y.shape)

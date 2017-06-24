@@ -258,11 +258,11 @@ class DexpressionNet(AbstractModel):
         self._loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=predictions, labels=labels))
         return self._loss
 
-    def validation(self, predictions, labels):
+    def metrics(self, predictions, labels):
         # Evaluating the model
         true_positives = tf.equal(tf.argmax(predictions, 1), tf.argmax(labels, 1))
         avg_accuracy = tf.reduce_mean(tf.cast(true_positives, tf.float32))
-        return avg_accuracy
+        return {'accuracy': avg_accuracy}
 
         # TODO:
 #   1. hyperparams optimization
