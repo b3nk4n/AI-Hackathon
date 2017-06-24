@@ -8,6 +8,7 @@ import logging
 import coloredlogs
 
 import tensorflow as tf
+from tensorflow.python.ops import control_flow_ops
 
 from models import dexpression as m
 from models.dexpression.conf import dex_hyper_params as hyper_params
@@ -41,6 +42,7 @@ def train(_):
     with tf.name_scope('loss-layer'):
         loss_op = classifier.loss(predictions, batch_labels)
         tf.summary.scalar('loss', loss_op)
+
         total_loss_op = classifier.total_loss(loss_op)
 
     with tf.name_scope('metrics'):
@@ -49,8 +51,12 @@ def train(_):
         tf.summary.scalar('accuracy', accuracy_op)
 
     with tf.name_scope('optimizer'):
-        train_op = tf.train.AdamOptimizer(FLAGS.learning_rate).minimize(total_loss_op,
-                                                                        global_step=global_step)
+        update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+        print("Found {} update ops.".format(len(update_ops)))
+        with tf.control_dependencies(update_ops):
+            optimizer = tf.train.AdamOptimizer(FLAGS.learning_rate)
+            train_op = optimizer.minimize(total_loss_op,
+                                          global_step=global_step)
     
     saver = tf.train.Saver()
 
