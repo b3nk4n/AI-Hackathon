@@ -249,10 +249,12 @@ def _split_data(filenames_dict, labels_dict, train_split):
 
 
 def _load_dataset_into_memory(filenames, labels):
+    one_hot_labels = np.zeros((len(labels), len(CLASSES)))
+    one_hot_labels[np.arange(len(labels)), labels] = 1
+
     images = []
-    for filename in filenames:
+    for filename, label in zip(filenames, labels):
         image = utils.image.read(filename, cv2.IMREAD_GRAYSCALE)
         images.append(image)
 
-    return np.asarray(images), np.asarray(labels)
-
+    return np.asarray(images), one_hot_labels
