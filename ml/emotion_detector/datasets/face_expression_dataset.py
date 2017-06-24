@@ -266,4 +266,4 @@ def _load_dataset_into_memory(filenames, labels):
 
 def _normalize_image(image):
     """Normalizes the image from [0, 255] to [-1, 1] with simple linear scaling."""
-    return (image / 227.5) - 1.0
+    return (image / 127.5) - 1.0
