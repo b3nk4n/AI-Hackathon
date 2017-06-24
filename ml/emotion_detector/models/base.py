@@ -130,11 +130,9 @@ class AbstractModel(object):
         params = self.__getstate__()
         
         def trim_prefix(text, prefix):
-            # trim underscore prefix
             return text[text.startswith(prefix) and len(prefix):]
         
         def to_string(value):
-            # <function sigmoid at 0x7f78b31bc410>
             if isinstance(value, types.FunctionType):
                 return value.__name__.upper()
             return value
