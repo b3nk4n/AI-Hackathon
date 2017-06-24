@@ -37,7 +37,11 @@ def jaffe_structure():
 
 
 if __name__ == '__main__':
-	jaffe_structure()
+    jaffe_dir = os.path.join(os.getcwd(), 'raw', 'jaffe')
+    if os.path.exists(jaffe_dir):
+        jaffe_structure()
+    else:
+        print("jaffe folder couldn't be found in raw/")
 
 # download data from: http://www.kasrl.org/jaffe_info.html
 # Extract data into raw (folder should be called jaffe)

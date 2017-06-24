@@ -62,6 +62,12 @@ def train(_):
         valid_writer = tf.summary.FileWriter(os.path.join(FLAGS.summary_root, 'validation'))
 
         sess.run(tf.global_variables_initializer())
+        sess.run(tf.local_variables_initializer())
+
+        if FLAGS.restore_checkpoint is not None:
+            logging.info("Model restored from file: {}".format(FLAGS.restore_checkpoint))
+            saver.restore(sess, FLAGS.restore_checkpoint)
+
         logging.info('Model with {} trainable parameters.'.format(utils.tensor.get_num_trainable_params()))
 
         # Start input enqueue threads
@@ -82,7 +88,6 @@ def train(_):
                     break
 
                 logging.info('Starting epoch {} / {}...'.format(epoch, FLAGS.train_epochs))
-                sess.run(tf.local_variables_initializer())
 
                 num_batches = int(dataset.train_size / FLAGS.batch_size)
                 for b in range(num_batches):
@@ -123,14 +128,14 @@ def train(_):
                 valid_writer.add_summary(summary, gstep)
                 valid_writer.flush()
 
-                # if FLAGS.save_checkpoint:
-                #    checkpoint_dir = 'checkpoint'  # FIXME different runs would override the same checkpoint!
-                #    if not os.path.isdir(checkpoint_dir):
-                #        os.makedirs(checkpoint_dir)
-                #    # save checkpoint
-                #    logging.info('Saving checkpoint...')
-                #    save_path = saver.save(sess, os.path.join(checkpoint_dir, 'model.ckpt'))
-                #    logging.info('Model saved in file: {}'.format(save_path))
+                # Save the variables to disk
+                # FIXME different runs would override the same checkpoint!
+                checkpoint_dir = FLAGS.checkpoint_root
+                if not os.path.isdir(checkpoint_dir):
+                    os.makedirs(checkpoint_dir)
+
+                save_path = saver.save(sess, os.path.join(checkpoint_dir, 'model.ckpt'), global_step)
+                logging.info("Model saved in file: {}".format(save_path))
 
         except tf.errors.OutOfRangeError:
             logging.info('Done training -- epoch limit reached')
@@ -161,6 +166,10 @@ if __name__ == '__main__':
                         help='Whether the dataset should be checked only.')
     PARSER.add_argument('--summary_root', type=str, default='summary',
                         help='The root directory for the summaries.')
+    PARSER.add_argument('--checkpoint_root', type=str, default='checkpoint',
+                        help='The root directory for the checkpoints.')
+    PARSER.add_argument('--restore_checkpoint', type=str, default=None,
+                        help='The path to the checkpoint to restore.')
     PARSER.add_argument('--data_root', type=str, default='emotions',
                         help='The root directory of the data.')
     FLAGS, UNPARSED = PARSER.parse_known_args()
