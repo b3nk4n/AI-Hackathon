@@ -3,101 +3,49 @@
 from __future__ import absolute_import
 
 import logging
+import coloredlogs
 
 import tensorflow as tf
 
 from models.base import AbstractModel
 
-
 logger = logging.getLogger(__name__)
+coloredlogs.install(level='INFO')
 
 
 class DexpressionNet(AbstractModel):
-    @property
-    def HP_CONV(self):
-        return 'convs'
+    @staticmethod
+    def conv_names_from_feat_ex(l):
+        return ['conv_{}{}'.format(l, p) for p in ['a', 'b', 'c']]
 
-    @property
-    def HP_ALL_CONVS(self):
-        def convs_from_feat_ex(l):
-            return ['conv_{}{}'.format(l, p) for p in ['a', 'b', 'c']]
+    @staticmethod
+    def mp_names_from_feat_ex(l):
+        return ['pool_{}{}'.format(l, p) for p in ['a', 'b']]
 
-        return ['conv_1'] + convs_from_feat_ex('2') + convs_from_feat_ex('3')
+    HP_CONV = 'convs'
+    HP_CONV_KERNEL_SIZE = 'kernel_size'
+    HP_CONV_N_FILTERS = 'n_filters'
+    HP_CONV_ACTIVATION_FN = 'act_fn'
 
-    @property
-    def HP_CONV_KERNEL_SIZE(self):
-        return 'kernel_size'
+    HP_MP = 'mp'
+    HP_MP_POOL_SIZE = 'pool_size'
 
-    @property
-    def HP_CONV_N_FILTERS(self):
-        return 'n_filters'
+    HP_FC = 'fc'
+    HP_FC_N_OUTPUTS = 'n_outputs'
 
-    @property
-    def HP_CONV_ACTIVATION_FN(self):
-        return 'act_fn'
+    HP_FC_DROPOUT_RATE = 'dropout_rate'
 
-    @property
-    def HP_MP(self):
-        return 'mp'
+    __REGL_FN = 'regl_fn'
+    HP_FC_REGL_FN = __REGL_FN
+    HP_CONV_REGL_FN = __REGL_FN
 
-    @property
-    def HP_ALL_MPS(self):
-        def mps_from_feat_ex(l):
-            return ['pool_{}{}'.format(l, p) for p in ['a', 'b']]
+    __HP_STRIDES = 'strides'
+    HP_MP_STRIDES = __HP_STRIDES
+    HP_CONV_STRIDES = __HP_STRIDES
 
-        return ['pool_1'] + mps_from_feat_ex('2') + mps_from_feat_ex('3')
-
-    @property
-    def HP_MP_POOL_SIZE(self):
-        return 'pool_size'
-
-    @property
-    def HP_FC(self):
-        return 'fc'
-
-    @property
-    def HP_FC_N_OUTPUTS(self):
-        return 'n_outputs'
-
-    @property
-    def HP_FC_DROPOUT_RATE(self):
-        return 'dropout_rate'
-
-    @property
-    def __REGL_FN(self):
-        return 'regl_fn'
-
-    @property
-    def HP_FC_REGL_FN(self):
-        return self.__REGL_FN
-
-    @property
-    def HP_CONV_REGL_FN(self):
-        return self.__REGL_FN
-
-    @property
-    def __HP_STRIDES(self):
-        return 'strides'
-
-    @property
-    def HP_MP_STRIDES(self):
-        return self.__HP_STRIDES
-
-    @property
-    def HP_CONV_STRIDES(self):
-        return self.__HP_STRIDES
-
-    @property
-    def __HP_PADDING_TYPE(self):
-        return 'padding_type'
-
-    @property
-    def HP_CONV_PADDING_TYPE(self):
-        return self.__HP_PADDING_TYPE
-
-    @property
-    def HP_MP_PADDING_TYPE(self):
-        return self.__HP_PADDING_TYPE
+    __HP_PADDING_TYPE = 'padding_type'
+    HP_CONV_PADDING_TYPE = __HP_PADDING_TYPE
+    HP_MP_PADDING_TYPE = __HP_PADDING_TYPE
 
     def __init__(self, weight_decay, hyper_params):
         super(DexpressionNet, self).__init__(weight_decay)
@@ -131,7 +79,7 @@ class DexpressionNet(AbstractModel):
         conv_b = self.__conv2d(conv_a, 'conv_{}b'.format(id))
         conv_c = self.__conv2d(pool_a, 'conv_{}c'.format(id))
 
-        concat = tf.concat([conv_b, conv_c], axis=0)
+        concat = tf.concat([conv_b, conv_c], axis=-1)
 
         pool_b = self.__max_pooling2d(concat, 'pool_{}b'.format(id))
 
@@ -265,8 +213,10 @@ class DexpressionNet(AbstractModel):
         return out
 
     def inference(self, inputs, labels, is_training=True):
+        # logging.info(inputs.get_shape().as_list())
         # level 1
         conv_1 = self.__conv2d(inputs, 'conv_1')
+        # logging.info(conv_1.get_shape().as_list())
         pool_1 = self.__max_pooling2d(conv_1, 'pool_1')
 
         # we are using batch normalisation instead of lrn
@@ -277,7 +227,9 @@ class DexpressionNet(AbstractModel):
 
         # level 3
         feat_ex_3 = self.__feat_ex(feat_ex_2, '3')
-        flattened_feat_ex_3 = tf.reshape(feat_ex_3, [-1])
+        # logging.info(feat_ex_3.get_shape().as_list())
+        flattened_feat_ex_3 = tf.contrib.layers.flatten(feat_ex_3)
+        # logging.info(flattened_feat_ex_3.get_shape().as_list())
 
         # optional fully connected which is not in the paper
         fc_1, skip_fc_1 = self.__fully_connected(flattened_feat_ex_3, 'fc_1')
@@ -291,11 +243,13 @@ class DexpressionNet(AbstractModel):
             fc_1 = self.__dropout(fc_1, 'fc_1')
 
         # classification layer
-        self._classifier = self.__fully_connected(fc_1, 'out', labels.get_shape().as_list()[-1])
+        self._classifier, _ = self.__fully_connected(fc_1, 'out', labels.get_shape().as_list()[-1])
 
         return self._classifier
 
     def loss(self, predictions, labels):
+        # logging.info(predictions.get_shape().as_list())
+        # logging.info(labels.get_shape().as_list())
         # note tf.nn.softmax_cross_entropy_with_logits expects pred to be unscaled,
         # since it performs a softmax on logits internally for efficiency. Otherwise it is same as -
         #  -(y * log(softmax(pred)))
