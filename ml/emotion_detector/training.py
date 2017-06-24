@@ -4,6 +4,8 @@ from __future__ import absolute_import, division, print_function
 import os
 import sys
 import argparse
+import logging
+import coloredlogs
 
 import tensorflow as tf
 
@@ -13,6 +15,9 @@ from datasets import face_expression_dataset as ds
 import utils.tensor
 
 FLAGS = None
+
+logger = logging.getLogger(__name__)
+coloredlogs.install(level='INFO')
 
 # disable TensorFlow C++ warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -44,18 +49,18 @@ def train(_):
 
     with tf.Session() as sess:
        
-        train_writer = tf.summary.FileWriter(os.path.join(FLAGS.summary_dir, 'training'), sess.graph)
-        valid_writer = tf.summary.FileWriter(os.path.join(FLAGS.summary_dir, 'validation'))
+        # train_writer = tf.summary.FileWriter(os.path.join(FLAGS.summary_dir, 'training'), sess.graph)
+        # valid_writer = tf.summary.FileWriter(os.path.join(FLAGS.summary_dir, 'validation'))
 
         sess.run(tf.global_variables_initializer())
-        print('Model with {} trainable parameters.'.format(utils.tensor.get_num_trainable_params()))
+        logging.info('Model with {} trainable parameters.'.format(utils.tensor.get_num_trainable_params()))
 
         # Start input enqueue threads
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
         try:
-            print('Start training...')
+            logging.info('Start training ...')
             step = 0
             epoch = 0
             loss_sum = loss_n = 0
@@ -66,7 +71,7 @@ def train(_):
                 if epoch > FLAGS.train_epochs:
                     break
 
-                print('Starting epoch {} / {}...'.format(epoch, FLAGS.train_epochs))
+                logging.info('Starting epoch {} / {}...'.format(epoch, FLAGS.train_epochs))
                 sess.run(tf.local_variables_initializer())
 
                 num_batches = int(dataset.train_size / dataset.batch_size)
@@ -81,17 +86,17 @@ def train(_):
 
                     if step % 10 == 0:
                         loss_avg = loss_sum / loss_n
-                        print('Step {:3d} with loss: {:.5f}'.format(step, loss_avg))
+                        logging.info('Step {:3d} with loss: {:.5f}'.format(step, loss_avg))
                         loss_sum = loss_n = 0
                         # write to summary
-                        train_writer.add_summary(summary, step)
-                        train_writer.flush()
+                        # train_writer.add_summary(summary, step)
+                        # train_writer.flush()
 
                 # validation step
                 # TODO get next train batch and feed it, or use the queue, and use a loop in case we cannot read all data at once
                 # loss, summary = sess.run([loss_op, summary_op],
                 #                         feed_dict={})
-                # print('VALIDATION > Step {:3d} with loss: {:.5f}'.format(step, loss))
+                # logging.info('VALIDATION > Step {:3d} with loss: {:.5f}'.format(step, loss))
                 # valid_writer.add_summary(summary, step)
                 # valid_writer.flush()
 
@@ -100,12 +105,12 @@ def train(_):
                 #    if not os.path.isdir(checkpoint_dir):
                 #        os.makedirs(checkpoint_dir)
                 #    # save checkpoint
-                #    print('Saving checkpoint...')
+                #    logging.info('Saving checkpoint...')
                 #    save_path = saver.save(sess, os.path.join(checkpoint_dir, 'model.ckpt'))
-                #    print('Model saved in file: {}'.format(save_path))
+                #    logging.info('Model saved in file: {}'.format(save_path))
 
         except tf.errors.OutOfRangeError:
-            print('Done training -- epoch limit reached')
+            logging.info('Done training -- epoch limit reached')
         finally:
             # When done, ask the threads to stop.
             coord.request_stop()
