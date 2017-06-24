@@ -1,5 +1,7 @@
 from __future__ import print_function
 
+import coremltools
+
 from keras.preprocessing.image import ImageDataGenerator
 
 from models.dexpression import model_keras
@@ -25,10 +27,10 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 # this is a generator that will read pictures found in
-# subfolers of 'data/train', and indefinitely generate
+# the subfolders of the given root, and indefinitely generate
 # batches of augmented image data
 train_generator = train_datagen.flow_from_directory(
-        'emotions',  # this is the target directory
+        'emotions_split/train',
         target_size=(image_size, image_size),
         color_mode='grayscale',
         batch_size=batch_size,
@@ -36,7 +38,7 @@ train_generator = train_datagen.flow_from_directory(
 
 # this is a similar generator, for validation data
 validation_generator = test_datagen.flow_from_directory(
-        'emotions',
+        'emotions_split/test',
         target_size=(image_size, image_size),
         color_mode='grayscale',
         batch_size=batch_size,
@@ -44,10 +46,12 @@ validation_generator = test_datagen.flow_from_directory(
 
 model.fit_generator(
         train_generator,
-        steps_per_epoch=20000 // batch_size,  # TODO count number of training examples?
-        epochs=50,
+        samples_per_epoch=20000,  # TODO count number of training examples?
+        nb_epoch=5,
         validation_data=validation_generator,
-        validation_steps=800 // batch_size)  # TODO count number of valid examples?
+        nb_val_samples=800)  # TODO count number of valid examples?
 
 # export model weights
 model.save_weights('first_try.h5')
+coreml_model = coremltools.converters.keras.convert(model)
+coreml_model.save("keras_model.mlmodel")
