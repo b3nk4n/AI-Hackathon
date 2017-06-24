@@ -14,19 +14,17 @@ CLASSES = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 
 class FaceExpressionDataset(object):
-    def __init__(self, data_root, train_split=0.8,
+    def __init__(self, data_root, train_split=0.8, file_pattern='*.png',
                  queue_num_threads=8, queue_min_examples=4096):
         self._data_root = data_root
         self.queue_num_threads = queue_num_threads
         self.queue_min_examples = queue_min_examples
 
-        all_filenames, all_labels = _read_files(data_root, '*.png')
+        all_filenames, all_labels = _read_files(data_root, file_pattern)
 
         train_data, valid_data = _split_data(all_filenames, all_labels, train_split)
         self.train_filenames = train_data[0]
         self.train_labels = train_data[1]
-        # self.valid_filenames = valid_data[0]
-        # self.valid_labels = valid_data[1]
 
         self._valid_index = 0
         self.valid_images, self.valid_labels = _load_dataset_into_memory(valid_data[0], valid_data[1])
@@ -46,14 +44,17 @@ class FaceExpressionDataset(object):
         input_example.read_example(input_queue)
         result_image = tf.cast(input_example.image, tf.float32)
 
+        # scale values to interval [-1, 1]
+        result_image = _normalize_image(result_image)
+
         if augment_data:
             # Image processing for training the network
 
             # Randomly crop a [height, width] section of the image
-            result_image = tf.random_crop(result_image,
-                                          [input_example.height,
-                                           input_example.width,
-                                           input_example.depth])  # TODO do crop? crop center?
+            #result_image = tf.random_crop(result_image,
+            #                              [input_example.height,
+            #                               input_example.width,
+            #                               input_example.depth])
 
             # Randomly flip the image horizontally.
             result_image = tf.image.random_flip_left_right(result_image)
@@ -62,26 +63,27 @@ class FaceExpressionDataset(object):
             # the order their operation
             # NOTE: since per_image_standardization zeros the mean and makes
             # the stddev unit, this likely has no effect see tensorflow#1458
-            result_image = tf.image.random_brightness(result_image,
-                                                      max_delta=50)
-            result_image = tf.image.random_contrast(result_image,
-                                                    lower=0.5, upper=1.5)
+            #result_image = tf.image.random_brightness(result_image,
+            #                                          max_delta=10)
+            #result_image = tf.image.random_contrast(result_image,
+            #                                        lower=0.9, upper=1.1)
             # Limit pixel values to [0, 1]
-            result_image = tf.minimum(result_image, 1.0)
-            result_image = tf.maximum(result_image, 0.0)
-        else:
+            #result_image = tf.minimum(result_image, 1.0)
+            #result_image = tf.maximum(result_image, 0.0)
+        ##else:
             # Crop the central [height, width] of the image
-            result_image = tf.image.resize_image_with_crop_or_pad(result_image,
-                                                                  input_example.height, input_example.width)
+            #result_image = tf.image.resize_image_with_crop_or_pad(result_image,
+            #                                                      input_example.height, input_example.width)
 
+        result_image.set_shape([input_example.height, input_example.width, input_example.depth])
         # Subtract off the mean and divide by the variance of the pixels
-        processed_image = tf.image.per_image_standardization(result_image)
+        # result_image = tf.image.per_image_standardization(result_image)
 
         # Ensure that the random shuffling has good mixing properties
         print('Filling queue with {} images...'.format(self.queue_min_examples))
 
         # Generate a batch of images and labels by building up a queue of examples.
-        return self._generate_image_and_label_batch(processed_image, input_example.label,
+        return self._generate_image_and_label_batch(result_image, input_example.label,
                                                     batch_size)
 
     def valid_reset(self):
@@ -96,7 +98,6 @@ class FaceExpressionDataset(object):
         batch_labels = self.valid_labels[self._valid_index:end_index]
         self._valid_index = end_index
         return batch_images, batch_labels
-
 
     def _generate_image_and_label_batch(self, image, label, batch_size):
         """Construct a queued batch of images and labels.
@@ -249,10 +250,18 @@ def _split_data(filenames_dict, labels_dict, train_split):
 
 
 def _load_dataset_into_memory(filenames, labels):
+    one_hot_labels = np.zeros((len(labels), len(CLASSES)))
+    one_hot_labels[np.arange(len(labels)), labels] = 1
+
     images = []
-    for filename in filenames:
+    for filename, label in zip(filenames, labels):
         image = utils.image.read(filename, cv2.IMREAD_GRAYSCALE)
+        image = _normalize_image(image)
         images.append(image)
 
-    return np.asarray(images), np.asarray(labels)
+    return np.asarray(images), one_hot_labels
 
+
+def _normalize_image(image):
+    """Normalizes the image from [0, 255] to [-1, 1] with simple linear scaling."""
+    return (image / 127.5) - 1.0

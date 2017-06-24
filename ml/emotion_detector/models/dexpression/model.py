@@ -25,23 +25,25 @@ class DexpressionNet(AbstractModel):
     HP_CONV = 'convs'
     HP_CONV_KERNEL_SIZE = 'kernel_size'
     HP_CONV_N_FILTERS = 'n_filters'
-    HP_CONV_ACTIVATION_FN = 'act_fn'
 
     HP_MP = 'mp'
     HP_MP_POOL_SIZE = 'pool_size'
 
     HP_FC = 'fc'
     HP_FC_N_OUTPUTS = 'n_outputs'
-
     HP_FC_DROPOUT_RATE = 'dropout_rate'
+
+    __ACTIVATION_FN = 'act_fn'
+    HP_CONV_ACTIVATION_FN = __ACTIVATION_FN
+    HP_FC_ACTIVATION_FN = __ACTIVATION_FN
 
     __REGL_FN = 'regl_fn'
     HP_FC_REGL_FN = __REGL_FN
     HP_CONV_REGL_FN = __REGL_FN
 
     __HP_STRIDES = 'strides'
-    HP_MP_STRIDES = __HP_STRIDES
     HP_CONV_STRIDES = __HP_STRIDES
+    HP_MP_STRIDES = __HP_STRIDES
 
     __HP_PADDING_TYPE = 'padding_type'
     HP_CONV_PADDING_TYPE = __HP_PADDING_TYPE
@@ -49,22 +51,6 @@ class DexpressionNet(AbstractModel):
 
     def __init__(self, weight_decay, hyper_params):
         super(DexpressionNet, self).__init__(weight_decay)
-
-        # some mappings to constant strings that are used to pass the hyper-paramers (HP) for the model
-        # TODO: convert to property of the class so that can be access from outside while contructing the HP dict
-        # related to convolution layers
-
-        # self.HP_CONV_KERNEL_SIZE = 'kernel_size'
-        # self.HP_CONV_N_FILTERS = 'n_filters'
-        # self.HP_CONV_ACT_FN = 'act_fn'
-        # # related to max-pooling ops (layers)
-        # self.HP_MP = 'mp'
-        # self.HP_MP_POOL_SIZE = 'pool_size'
-        # self.HP_CONV_REGL_FN = 'regl_fn'
-        # # some shared names
-        # self.HP_FC_REGL_FN = self.HP_CONV_REGL_FN = 'regl_fn'
-        # self.HP_MP_STRIDES = self.HP_CONV_STRIDES = 'strides'
-
         self.hyper_params = hyper_params
 
         # will bet set in the inference()
@@ -104,7 +90,7 @@ class DexpressionNet(AbstractModel):
             kernel_size,
             strides=strides,
             activation=activation_fn,
-            kernel_initializer=tf.random_normal_initializer(),
+            kernel_initializer=tf.contrib.layers.xavier_initializer(),
             kernel_regularizer=regularizer,
             name=conv_name,
             padding=padding_type,
@@ -149,17 +135,18 @@ class DexpressionNet(AbstractModel):
             return None, True
 
         # optional
-        regularizer = fc_hp.get(self.HP_FC_REGL_FN, None)
+        regularizer = fc_hp.get(self.HP_FC_REGL_FN, tf.contrib.layers.l2_regularizer(self._weight_decay))
+        activation_fn = fc_hp.get(self.HP_FC_ACTIVATION_FN, tf.nn.relu)
 
         dense_layer = tf.layers.dense(
             # custom
             inputs,
             n_outs,
             kernel_regularizer=regularizer,
+            kernel_initializer=tf.contrib.layers.xavier_initializer(),
+            activation=activation_fn,
             # default
-            activation=None,
             use_bias=True,
-            kernel_initializer=None,
             bias_initializer=tf.zeros_initializer(),
             bias_regularizer=None,
             activity_regularizer=None,
@@ -188,10 +175,7 @@ class DexpressionNet(AbstractModel):
             beta_regularizer=None,
             gamma_regularizer=None,
             trainable=True,
-            reuse=None,
-            renorm=False,
-            renorm_clipping=None,
-            renorm_momentum=0.99
+            reuse=None
         )
         return batch_norm
 
@@ -213,10 +197,8 @@ class DexpressionNet(AbstractModel):
         return out
 
     def inference(self, inputs, labels, is_training=True):
-        # logging.info(inputs.get_shape().as_list())
         # level 1
         conv_1 = self.__conv2d(inputs, 'conv_1')
-        # logging.info(conv_1.get_shape().as_list())
         pool_1 = self.__max_pooling2d(conv_1, 'pool_1')
 
         # we are using batch normalisation instead of lrn
@@ -227,9 +209,7 @@ class DexpressionNet(AbstractModel):
 
         # level 3
         feat_ex_3 = self.__feat_ex(feat_ex_2, '3')
-        # logging.info(feat_ex_3.get_shape().as_list())
         flattened_feat_ex_3 = tf.contrib.layers.flatten(feat_ex_3)
-        # logging.info(flattened_feat_ex_3.get_shape().as_list())
 
         # optional fully connected which is not in the paper
         fc_1, skip_fc_1 = self.__fully_connected(flattened_feat_ex_3, 'fc_1')
@@ -248,8 +228,6 @@ class DexpressionNet(AbstractModel):
         return self._classifier
 
     def loss(self, predictions, labels):
-        # logging.info(predictions.get_shape().as_list())
-        # logging.info(labels.get_shape().as_list())
         # note tf.nn.softmax_cross_entropy_with_logits expects pred to be unscaled,
         # since it performs a softmax on logits internally for efficiency. Otherwise it is same as -
         #  -(y * log(softmax(pred)))
@@ -263,7 +241,3 @@ class DexpressionNet(AbstractModel):
         true_positives = tf.equal(tf.argmax(predictions, 1), tf.argmax(labels, 1))
         avg_accuracy = tf.reduce_mean(tf.cast(true_positives, tf.float32))
         return {'accuracy': avg_accuracy}
-
-        # TODO:
-#   1. hyperparams optimization
-#   2. adding update to default or custom collection? - side effects on performance

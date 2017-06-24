@@ -4,7 +4,7 @@ from datasets import face_expression_dataset as ds
 
 DATA_ROOT = 'emotions'
 BATCH_SIZE = 4
-TEST_TRAINING = False  # False: test validation
+TEST_TRAINING = True  # False: test validation
 
 
 def main():
@@ -50,7 +50,8 @@ def test_training_input(sess, input_images, input_labels):
                 batch_images, batch_labels = sess.run([input_images, input_labels],
                                                       feed_dict={input_images: gen_image,
                                                                  input_labels: gen_label})
-            print('@{:5d} Batch shape: {}, {}'.format(step, batch_images.shape, batch_labels))
+            print('@{:5d} Batch shape: {}, {}; min: {}, max: {}'.format(step, batch_images.shape, batch_labels,
+                                                                        np.min(batch_images), np.max(batch_images)))
             step += 1
 
     except tf.errors.OutOfRangeError:
@@ -71,6 +72,7 @@ def test_validation_input(dataset):
         for step in range(num_batches):
             batch_x, batch_y = dataset.valid_batch(BATCH_SIZE)
             print(batch_x.shape, batch_y.shape)
+            print('image min/max:', np.min(batch_x), np.max(batch_x))
 
 
 if __name__ == '__main__':

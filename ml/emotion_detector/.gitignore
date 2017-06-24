@@ -1,2 +1,5 @@
 emotions/
 summary/
+checkpoint/
+*.h5
+*.mlmodel
