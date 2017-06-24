@@ -28,7 +28,7 @@ def train(_):
     with tf.device('/cpu:0') and tf.name_scope('input-pipeline'):
         dataset = ds.FaceExpressionDataset(FLAGS.data_root)
         batch_images, batch_labels = dataset.train_inputs(FLAGS.batch_size,
-                                                          augment_data=True)
+                                                          augment_data=FLAGS.augment_data)
 
     with tf.name_scope('inference'):
         classifier = m.DexpressionNet(FLAGS.weight_decay,
@@ -153,18 +153,16 @@ def train(_):
 
 if __name__ == '__main__':
     PARSER = argparse.ArgumentParser()
-    PARSER.add_argument('--batch_size', type=int, default=64,
+    PARSER.add_argument('--batch_size', type=int, default=128,
                         help='The batch size.')
     PARSER.add_argument('--learning_rate', type=float, default=0.0001,
                         help='The initial learning rate.')
-    PARSER.add_argument('--train_epochs', type=int, default=5,
+    PARSER.add_argument('--train_epochs', type=int, default=50,
                         help='The number of training epochs.')
     PARSER.add_argument('--weight_decay', type=float, default=5e-4,
                         help='The lambda koefficient for weight decay regularization.')
-    PARSER.add_argument('--augmentation', type=bool, default=False,
+    PARSER.add_argument('--augment_data', type=bool, default=True,
                         help='Whether data augmentation (rotate/shift/...) is used or not.')
-    PARSER.add_argument('--dataset_check', type=bool, default=False,
-                        help='Whether the dataset should be checked only.')
     PARSER.add_argument('--summary_root', type=str, default='summary',
                         help='The root directory for the summaries.')
     PARSER.add_argument('--checkpoint_root', type=str, default='checkpoint',
