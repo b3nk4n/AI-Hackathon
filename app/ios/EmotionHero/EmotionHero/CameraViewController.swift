@@ -1,27 +1,23 @@
-//
-//  GameViewController.swift
-//  EmotionHero
-//
-//  Created by Chris Kalas on 24.06.17.
-//  Copyright © 2017 Chris Kalas. All rights reserved.
-//
+/*
+ Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ See LICENSE.txt for this sample’s licensing information
+ 
+ Abstract:
+ View controller for camera interface.
+ */
 
 import UIKit
-import SpriteKit
-import GameplayKit
 import AVFoundation
 
-class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, AVCapturePhotoCaptureDelegate  {
-    @IBOutlet var scoreLabel: UILabel!
-    @IBOutlet var previewView: PreviewView!
-    @IBOutlet var skView: SKView!
+class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, AVCapturePhotoCaptureDelegate {
+    // MARK: View Controller Life Cycle
+    
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         // Set up the video preview view.
         session.sessionPreset = AVCaptureSessionPreset640x480
         previewView.session = session
-        
+
         
         /*
          Check video authorization status. Video access is required and audio
@@ -34,7 +30,7 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
             break
             
         case .notDetermined:
-            
+
             /*
              The user has not yet been presented with the option to grant
              video access. We suspend the session queue to delay session
@@ -69,24 +65,7 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
         sessionQueue.async { [unowned self] in
             self.configureSession()
         }
-    
-        let scene = GameScene(size: skView.bounds.size)
-        scene.scaleMode = .aspectFit
-        
-        skView.presentScene(scene)
-        
-        skView.ignoresSiblingOrder = true
-        
-        skView.showsFPS = true
-        skView.showsNodeCount = true
-        
-        scene.playSong(song: scene.sm.currentSong)
-        
-        
-    
     }
-    
-    // MARK -- Camera stuff
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -162,6 +141,7 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
     
     var videoDeviceInput: AVCaptureDeviceInput!
     
+    @IBOutlet private var previewView: PreviewView!
     
     // Call this on the session queue.
     private func configureSession() {
@@ -497,43 +477,3 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
         }
     }
 }
-
-extension AVCaptureDeviceDiscoverySession {
-    func uniqueDevicePositionsCount() -> Int {
-        var uniqueDevicePositions = [AVCaptureDevicePosition]()
-        
-        for device in devices {
-            if !uniqueDevicePositions.contains(device.position) {
-                uniqueDevicePositions.append(device.position)
-            }
-        }
-        
-        return uniqueDevicePositions.count
-    }
-}
-
-extension UIDeviceOrientation {
-    var videoOrientation: AVCaptureVideoOrientation? {
-        switch self {
-        case .portrait: return .portrait
-        case .portraitUpsideDown: return .portraitUpsideDown
-        case .landscapeLeft: return .landscapeRight
-        case .landscapeRight: return .landscapeLeft
-        default: return nil
-        }
-    }
-}
-
-extension UIInterfaceOrientation {
-    var videoOrientation: AVCaptureVideoOrientation? {
-        switch self {
-        case .portrait: return .portrait
-        case .portraitUpsideDown: return .portraitUpsideDown
-        case .landscapeLeft: return .landscapeLeft
-        case .landscapeRight: return .landscapeRight
-        default: return nil
-        }
-    }
-}
-
-

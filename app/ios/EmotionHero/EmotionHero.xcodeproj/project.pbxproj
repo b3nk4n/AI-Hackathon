@@ -17,6 +17,9 @@
 		832FA8291EFEC5340001B598 /* GridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 832FA8261EFEC5340001B598 /* GridView.swift */; };
 		832FA82A1EFEC5340001B598 /* SongManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 832FA8271EFEC5340001B598 /* SongManager.swift */; };
 		832FA82C1EFEC80A0001B598 /* emoji_faces in Resources */ = {isa = PBXBuildFile; fileRef = 832FA82B1EFEC80A0001B598 /* emoji_faces */; };
+		833808981EFFA1C800D17601 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833808961EFFA1C800D17601 /* CameraViewController.swift */; };
+		833808991EFFA1C800D17601 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833808971EFFA1C800D17601 /* PreviewView.swift */; };
+		8338089B1EFFA2FC00D17601 /* Crop+Rotate+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8338089A1EFFA2FC00D17601 /* Crop+Rotate+UIImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +35,9 @@
 		832FA8261EFEC5340001B598 /* GridView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridView.swift; sourceTree = "<group>"; };
 		832FA8271EFEC5340001B598 /* SongManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongManager.swift; sourceTree = "<group>"; };
 		832FA82B1EFEC80A0001B598 /* emoji_faces */ = {isa = PBXFileReference; lastKnownFileType = folder; path = emoji_faces; sourceTree = "<group>"; };
+		833808961EFFA1C800D17601 /* CameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
+		833808971EFFA1C800D17601 /* PreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		8338089A1EFFA2FC00D17601 /* Crop+Rotate+UIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Crop+Rotate+UIImage.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +70,9 @@
 		832FA80C1EFEC4860001B598 /* EmotionHero */ = {
 			isa = PBXGroup;
 			children = (
+				8338089A1EFFA2FC00D17601 /* Crop+Rotate+UIImage.swift */,
+				833808961EFFA1C800D17601 /* CameraViewController.swift */,
+				833808971EFFA1C800D17601 /* PreviewView.swift */,
 				832FA82B1EFEC80A0001B598 /* emoji_faces */,
 				832FA8251EFEC5340001B598 /* GameScene.swift */,
 				832FA8261EFEC5340001B598 /* GridView.swift */,
@@ -156,9 +165,12 @@
 			files = (
 				832FA82A1EFEC5340001B598 /* SongManager.swift in Sources */,
 				832FA8161EFEC4870001B598 /* GameViewController.swift in Sources */,
+				833808991EFFA1C800D17601 /* PreviewView.swift in Sources */,
 				832FA8281EFEC5340001B598 /* GameScene.swift in Sources */,
 				832FA8291EFEC5340001B598 /* GridView.swift in Sources */,
 				832FA80E1EFEC4860001B598 /* AppDelegate.swift in Sources */,
+				8338089B1EFFA2FC00D17601 /* Crop+Rotate+UIImage.swift in Sources */,
+				833808981EFFA1C800D17601 /* CameraViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -322,6 +334,7 @@
 				832FA8241EFEC4870001B598 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
