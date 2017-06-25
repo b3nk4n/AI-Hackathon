@@ -131,8 +131,8 @@ class DexpressionNet(AbstractModel):
 
         reduced_weights = keras.layers.pooling.MaxPooling2D(
             # custom
-            pool_size,
-            strides,
+            pool_size=pool_size,
+            strides=strides,
             border_mode=padding_type,
             dim_ordering='tf',
             name=max_pool_name
