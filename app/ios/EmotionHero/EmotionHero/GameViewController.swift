@@ -15,6 +15,9 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
     @IBOutlet var scoreLabel: UILabel!
     @IBOutlet var previewView: PreviewView!
     @IBOutlet var skView: SKView!
+    
+    var prediction: String!
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -81,6 +84,8 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
         skView.showsNodeCount = true
         
         scene.playSong(song: scene.sm.currentSong)
+        
+        prediction = "Happy"
         
         
     
