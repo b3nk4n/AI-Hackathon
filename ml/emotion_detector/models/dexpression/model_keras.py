@@ -190,6 +190,8 @@ class DexpressionNet(AbstractModel):
         return out
 
     def inference(self, inputs, labels, is_training=True):
+        # this model uses the Functional API design of Keras
+        # https://faroit.github.io/keras-docs/1.2.2/getting-started/functional-api-guide/
         inputs = keras.layers.Input(shape=self.input_shape)
         # level 1
         conv_1 = self.__conv2d('conv_1')(inputs)
