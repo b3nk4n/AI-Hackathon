@@ -54,7 +54,7 @@ validation_generator = test_datagen.flow_from_directory(
 model.fit_generator(
         train_generator,
         samples_per_epoch=31124,  # TODO count number of training examples?
-        nb_epoch=100,
+        nb_epoch=30,
         validation_data=validation_generator,
         nb_val_samples=7701)  # TODO count number of valid examples?
 
