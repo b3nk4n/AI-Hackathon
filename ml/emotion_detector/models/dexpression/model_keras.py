@@ -141,25 +141,34 @@ class DexpressionNet(AbstractModel):
 
     def __fully_connected(self, fc_name, n_outs=None):
         fc_hp = self.hyper_params[self.HP_FC][fc_name]
-        n_outs = n_outs if n_outs else fc_hp[self.HP_FC_N_OUTPUTS]
+        n_outputs = n_outs if n_outs else fc_hp[self.HP_FC_N_OUTPUTS]
 
         # since 'fc_1' is optional
-        if not n_outs:
+        if not n_outputs:
             return None, True
 
         # optional
         regularizer = fc_hp.get(self.HP_FC_REGL_FN, keras.regularizers.l2(self._weight_decay))
         activation_fn = fc_hp.get(self.HP_FC_ACTIVATION_FN, 'relu')
 
-        dense_layer = keras.layers.Dense(
-            # custom
-            output_dim=n_outs,
-            init='glorot_uniform',
-            activation=activation_fn,
-            W_regularizer=regularizer,
-            bias=True,
-            name=fc_name
-        )
+        if not n_outs:
+            dense_layer = keras.layers.Dense(
+                # custom
+                output_dim=n_outputs,
+                init='glorot_uniform',
+                activation=activation_fn,
+                W_regularizer=regularizer,
+                bias=True,
+                name=fc_name
+            )
+        else:
+            dense_layer = keras.layers.Dense(
+                # custom
+                output_dim=n_outs,
+                init='zero',
+                name=fc_name,
+                bias=False
+            )
         return dense_layer, False
 
     def __batch_normalization(self):
@@ -216,6 +225,8 @@ class DexpressionNet(AbstractModel):
                             "after the fully connected layer.")
             fc_1 = fc_1(flattened_feat_ex_3)
             fc_1_w_dropout = self.__dropout('fc_1')(fc_1)
+        else:
+            fc_1_w_dropout = flattened_feat_ex_3
 
         # classification layer
         classifier, _ = self.__fully_connected('out', n_outs=self.n_classes)

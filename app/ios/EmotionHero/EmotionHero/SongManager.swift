@@ -39,8 +39,8 @@ struct Song {
 
 enum Difficulty: Int {
     case Easy = 3
-    case Medium = 5
-    case Hard = 7
+    case Medium = 4
+    case Hard = 6
 }
 
 class SongManager {
