@@ -363,6 +363,7 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         
         // Only detect faces
         if transformedMetadataObject is AVMetadataFaceObject {
+            print("face")
             metadataObjectOverlayLayer.metadataObject = transformedMetadataObject
             metadataObjectOverlayLayer.lineJoin = kCALineJoinRound
             metadataObjectOverlayLayer.lineWidth = 7.0
@@ -373,6 +374,8 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             // Save face rect
             faceBounds = newRect
             
+        } else {
+            print("no face")
         }
         
         return metadataObjectOverlayLayer

@@ -9,7 +9,6 @@
 import Foundation
 import SpriteKit
 
-
 class GameScene: SKScene {
     // TODO: something to manage neutral
     // TODO: store the faces in assets dewd
@@ -22,9 +21,18 @@ class GameScene: SKScene {
     // TODO: observer
     var score = 0
     var parentVC: UIViewController?
+    var faceDetected: Bool? {
+        didSet {
+            print("Face detected")
+        }
+    }
+    
     var prediction: String? {
         didSet {
-            evaluateExpression()
+            print("Prediction changed")
+            if faceDetected != nil {
+                evaluateExpression()
+            }
         }
     }
     
@@ -90,7 +98,10 @@ class GameScene: SKScene {
     }
 
     func evaluateExpression() -> Bool {
-        return Bool.random()
+        print(faceDetected)
+        let eval = Bool.random(greaterThan:8) && faceDetected!
+        faceDetected! = false
+        return eval
     }
     
     // TODO: dont hardcode these thresholds and maybe think about a time based callback system
@@ -121,6 +132,7 @@ class GameScene: SKScene {
         if let skview = view {
             parentVC = skview.parentViewController
             prediction = (parentVC! as! GameViewController).prediction
+            faceDetected = (parentVC! as! GameViewController).faceDetected
         }
     }
     
@@ -196,5 +208,10 @@ extension UIView {
 extension Bool {
     static func random() -> Bool {
         return arc4random_uniform(2) == 0
+    }
+    
+    // /10
+    static func random(greaterThan: Int) -> Bool {
+        return arc4random_uniform(11) < greaterThan
     }
 }
