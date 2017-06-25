@@ -165,8 +165,9 @@ class DexpressionNet(AbstractModel):
             dense_layer = keras.layers.Dense(
                 # custom
                 output_dim=n_outs,
-                init='glorot_uniform',
-                name=fc_name
+                init='zero',
+                name=fc_name,
+                bias=False
             )
         return dense_layer, False
 
