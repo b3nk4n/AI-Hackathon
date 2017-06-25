@@ -60,5 +60,5 @@ model.fit_generator(
 
 # export model weights
 model.save_weights('first_try.h5')
-coreml_model = coremltools.converters.keras.convert(model)
+coreml_model = coremltools.converters.keras.convert(model, input_names='input_1', image_input_names='input_1', image_scale=1/.255)
 coreml_model.save("keras_model.mlmodel")
