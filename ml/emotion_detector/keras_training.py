@@ -4,12 +4,19 @@ import coremltools
 
 from keras.preprocessing.image import ImageDataGenerator
 
-from models.dexpression import model_keras
+from models.dexpression import DexpressionNetKeras #, model_keras
+from models.dexpression.conf import dex_hyper_params as hyper_params
+from datasets.face_expression_dataset import CLASSES
 
-batch_size = 64
+batch_size = 128
 image_size = 48
+input_shape = (image_size, image_size, 1)
+n_classes = len(CLASSES)
 
-model = model_keras.create_model(image_size)
+dexpression_net_keras = DexpressionNetKeras(0.0005, input_shape=input_shape, hyper_params=hyper_params,
+                                            n_classes=n_classes)
+model = dexpression_net_keras.inference(None, None)
+# model = model_keras.create_model(image_size)
 
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
@@ -46,7 +53,7 @@ validation_generator = test_datagen.flow_from_directory(
 
 model.fit_generator(
         train_generator,
-        samples_per_epoch=20000,  # TODO count number of training examples?
+        samples_per_epoch=200000,  # TODO count number of training examples?
         nb_epoch=5,
         validation_data=validation_generator,
         nb_val_samples=800)  # TODO count number of valid examples?
