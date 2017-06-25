@@ -128,32 +128,47 @@ class DexpressionNet(AbstractModel):
 
     def __fully_connected(self, inputs, fc_name, n_outs=None):
         fc_hp = self.hyper_params[self.HP_FC][fc_name]
-        n_outs = n_outs if n_outs else fc_hp[self.HP_FC_N_OUTPUTS]
+        n_outputs = n_outs if n_outs else fc_hp[self.HP_FC_N_OUTPUTS]
 
         # since 'fc_1' is optional
-        if not n_outs:
+        if not n_outputs:
             return None, True
 
         # optional
         regularizer = fc_hp.get(self.HP_FC_REGL_FN, tf.contrib.layers.l2_regularizer(self._weight_decay))
         activation_fn = fc_hp.get(self.HP_FC_ACTIVATION_FN, tf.nn.relu)
 
-        dense_layer = tf.layers.dense(
-            # custom
-            inputs,
-            n_outs,
-            kernel_regularizer=regularizer,
-            kernel_initializer=tf.contrib.layers.xavier_initializer(),
-            activation=activation_fn,
-            # default
-            use_bias=True,
-            bias_initializer=tf.zeros_initializer(),
-            bias_regularizer=None,
-            activity_regularizer=None,
-            trainable=True,
-            name=None,
-            reuse=None
-        )
+        if not n_outs:
+            dense_layer = tf.layers.dense(
+                # custom
+                inputs,
+                n_outputs,
+                kernel_regularizer=regularizer,
+                kernel_initializer=tf.contrib.layers.xavier_initializer(),
+                activation=activation_fn,
+                name=fc_name,
+                # default
+                use_bias=True,
+                bias_initializer=tf.zeros_initializer(),
+                bias_regularizer=None,
+                activity_regularizer=None,
+                trainable=True,
+                reuse=None
+            )
+        else:
+            dense_layer = tf.layers.dense(
+                # custom
+                inputs,
+                n_outputs,
+                kernel_initializer=tf.zeros_initializer(),
+                use_bias=False,
+                name=fc_name,
+                # default
+                activity_regularizer=None,
+                trainable=True,
+                reuse=None
+            )
+
         return dense_layer, False
 
     def __batch_normalization(self, inputs, is_training, name):

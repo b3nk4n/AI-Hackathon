@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import coremltools
 
+import keras
 from keras.preprocessing.image import ImageDataGenerator
 
 from models.dexpression import DexpressionNetKeras #, model_keras
@@ -25,8 +26,6 @@ model.compile(loss='categorical_crossentropy',
 # this is the augmentation configuration we will use for training
 train_datagen = ImageDataGenerator(
         rescale=1./255,
-        shear_range=0.1,  # TODO what is this and is it useful?
-        zoom_range=0.1,
         horizontal_flip=True)
 
 # this is the augmentation configuration we will use for testing:
@@ -53,12 +52,13 @@ validation_generator = test_datagen.flow_from_directory(
 
 model.fit_generator(
         train_generator,
-        samples_per_epoch=31124,  # TODO count number of training examples?
-        nb_epoch=100,
+        samples_per_epoch=train_generator.n,
+        nb_epoch=30,
+        callbacks=[keras.callbacks.TensorBoard(log_dir='summary_keras')],
         validation_data=validation_generator,
-        nb_val_samples=7701)  # TODO count number of valid examples?
+        nb_val_samples=validation_generator.n)
 
 # export model weights
 model.save_weights('first_try.h5')
-coreml_model = coremltools.converters.keras.convert(model)
+coreml_model = coremltools.converters.keras.convert(model, input_names='input_1', image_input_names='input_1', image_scale=1/.255)
 coreml_model.save("keras_model.mlmodel")
