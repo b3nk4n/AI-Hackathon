@@ -21,20 +21,8 @@ class GameScene: SKScene {
     // TODO: observer
     var score = 0
     var parentVC: UIViewController?
-    var faceDetected: Bool? {
-        didSet {
-            print("Face detected")
-        }
-    }
-    
-    var prediction: String? {
-        didSet {
-            print("Prediction changed")
-            if faceDetected != nil {
-                evaluateExpression()
-            }
-        }
-    }
+    var faceDetected: Bool?
+    var prediction: String?
     
     var spriteList: [(sprite: SKSpriteNode, position: Int, lane: Int)]
     
@@ -58,6 +46,17 @@ class GameScene: SKScene {
         sm.generateRandomSong(length: 200, difficulty: .Hard)
         
         
+    }
+    
+    // MARK: Some observers for properties of view controller
+    func receiveDetectionFromViewController(detected: Bool) {
+        //print("Recieved: \(detected)")
+        faceDetected = detected
+    }
+    
+    func receivePredictionFromViewController(prediction: String) {
+        print("Recieved prediction: \(prediction)")
+        self.prediction = prediction
     }
     
     func playSong(song: Song) {
@@ -98,10 +97,13 @@ class GameScene: SKScene {
     }
 
     func evaluateExpression() -> Bool {
-        print(faceDetected)
-        let eval = Bool.random(greaterThan:8) && faceDetected!
-        faceDetected! = false
-        return eval
+        print("Evaluating...")
+        if let detected = faceDetected {
+            print("Deteced: \(detected)")
+            return Bool.random(greaterThan:8) && detected
+        }
+        
+        return false
     }
     
     // TODO: dont hardcode these thresholds and maybe think about a time based callback system

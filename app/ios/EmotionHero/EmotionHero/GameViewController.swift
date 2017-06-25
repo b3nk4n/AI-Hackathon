@@ -16,14 +16,30 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
     @IBOutlet var previewView: PreviewView!
     @IBOutlet var skView: SKView!
     
-    var prediction: String!
-    var faceDetected: Bool!
+    var prediction: String! {
+        didSet {
+            if let view = skView {
+                if let scene = view.scene {
+                    (scene as! GameScene).receivePredictionFromViewController(prediction: prediction)
+                }
+            }
+        }
+    }
+    var faceDetected: Bool! {
+        didSet {
+            if let view = skView {
+                if let scene = view.scene {
+                    (scene as! GameScene).receiveDetectionFromViewController(detected: faceDetected)
+                }
+            }
+        }
+    }
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        prediction = "Happy"
+        prediction = "Neutral"
         faceDetected = false
         
         // Set up the video preview view.
@@ -407,7 +423,6 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
             faceBounds = newRect
             
         }
-        
         return metadataObjectOverlayLayer
     }
     
@@ -512,7 +527,7 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
         if metadataObjectsOverlayLayersDrawingSemaphore.wait(timeout: DispatchTime.now()) == .success {
             DispatchQueue.main.async { [unowned self] in
                 self.removeMetadataObjectOverlayLayers()
-                
+                self.faceDetected = false
                 var metadataObjectOverlayLayers = [MetadataObjectLayer]()
                 for metadataObject in metadataObjects as! [AVMetadataObject] {
                     if metadataObject.type == AVMetadataObjectTypeFace {
