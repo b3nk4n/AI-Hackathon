@@ -8,8 +8,9 @@
 
 import UIKit
 import AVFoundation
+import CoreML
 
-class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, AVCapturePhotoCaptureDelegate {
+class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, AVCapturePhotoCaptureDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     // MARK: View Controller Life Cycle
     
     override func viewDidLoad() {
@@ -350,6 +351,15 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     private func createMetadataObjectOverlayWithMetadataObject(_ metadataObject: AVMetadataObject) -> MetadataObjectLayer {
         // Transform the metadata object so the bounds are updated to reflect those of the video preview layer.
         let transformedMetadataObject = previewView.videoPreviewLayer.transformedMetadataObject(for: metadataObject)
+        let faceRect = transformedMetadataObject!.bounds
+        
+        // Increace face boxing by pct %
+        let pct: CGFloat = 1.2; // increase in %: 1.2 -> +20%, 0.5 -> -50%
+        let width = faceRect.width
+        let height = faceRect.height
+        let newWidth = sqrt(width * width * pct)
+        let newHeight = sqrt(height * height * pct)
+        let newRect = faceRect.insetBy(dx:(width-newWidth)/2, dy:(height-newHeight)/2);
         
         // Only detect faces
         if transformedMetadataObject is AVMetadataFaceObject {
@@ -358,10 +368,11 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             metadataObjectOverlayLayer.lineWidth = 7.0
             metadataObjectOverlayLayer.strokeColor = view.tintColor.withAlphaComponent(0.7).cgColor
             metadataObjectOverlayLayer.fillColor = view.tintColor.withAlphaComponent(0.3).cgColor
-            metadataObjectOverlayLayer.path = CGPath(rect: transformedMetadataObject!.bounds, transform: nil)
+            metadataObjectOverlayLayer.path = CGPath(rect: newRect, transform: nil)
             
             // Save face rect
-            faceBounds = transformedMetadataObject!.bounds
+            faceBounds = newRect
+            
         }
         
         return metadataObjectOverlayLayer
@@ -395,12 +406,18 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     }
     
     // MARK: Capture still image
+    
     let stillImageOutput = AVCapturePhotoOutput()
     var faceBounds = CGRect.null
     @IBOutlet weak var capturedImage: UIImageView!
+    public var faceImage = UIImage()
     
     // Take picture button
     @IBAction func didPressTakePhoto(_ sender: UIButton) {
+        captureFace()
+    }
+    
+    func captureFace() {
         let settings = AVCapturePhotoSettings()
         let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
         let previewFormat = [
@@ -424,31 +441,39 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             let dataImage =  AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer:  sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
             let dataProvider = CGDataProvider(data: dataImage as CFData)
             let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
-            self.capturedImage.image = cropToPreviewLayer(originalImage: cgImageRef).rotate(byDegrees: 90)
+            // TODO: Remove setting the UIView image
+            self.capturedImage.image = cropToPreviewLayer(originalImage: cgImageRef,
+                                                          layer: self.previewView.videoPreviewLayer,
+                                                          faceBounds: self.faceBounds)
+            faceImage = cropToPreviewLayer(originalImage: cgImageRef,
+                                           layer: self.previewView.videoPreviewLayer,
+                                           faceBounds: self.faceBounds)
+            print(predictEmotion(faceImage: faceImage))
         } else {
             print("some error here")
         }
     }
     
-    private func cropToPreviewLayer(originalImage: CGImage) -> UIImage {
-        let outputRect = self.previewView.videoPreviewLayer.metadataOutputRectOfInterest(for: faceBounds)
-        var cgImage = originalImage
-        let width = CGFloat(cgImage.width)
-        let height = CGFloat(cgImage.height)
-        let cropRect = CGRect(x: outputRect.origin.x * width, y: outputRect.origin.y * height, width: outputRect.size.width * width, height: outputRect.size.height * height)
-        
-        cgImage = cgImage.cropping(to: cropRect)!
-        
-        // The tonal is a bit lighter
-        let currentFilter = CIFilter(name: "CIPhotoEffectTonal") //CIPhotoEffectNoir
-        currentFilter!.setValue(CIImage(cgImage: cgImage), forKey: kCIInputImageKey)
-        let output = currentFilter!.outputImage
-        var context = CIContext(options: nil)
-        let grayScale = context.createCGImage(output!,from: output!.extent)
-        
-        let croppedUIImage = UIImage(cgImage: grayScale ?? cgImage, scale: 1.0, orientation: .downMirrored)
-        
-        return croppedUIImage
+    
+    //MARK: - Add image to Library
+    var imagePicker: UIImagePickerController!
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            // we got back an error!
+            let ac = UIAlertController(title: "Save error", message: error.localizedDescription, preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac, animated: true)
+        } else {
+            let ac = UIAlertController(title: "Saved!", message: "Your altered image has been saved to your photos.", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac, animated: true)
+        }
+    }
+    
+    //MARK: - Done image capture here
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        imagePicker.dismiss(animated: true, completion: nil)
+        //        imageTake.image = info[UIImagePickerControllerOriginalImage] as? UIImage
     }
     
     // MARK: AVCaptureMetadataOutputObjectsDelegate
@@ -469,6 +494,8 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
                 self.addMetadataObjectOverlayLayersToVideoPreviewView(metadataObjectOverlayLayers)
                 
                 self.metadataObjectsOverlayLayersDrawingSemaphore.signal()
+                
+                self.captureFace()
             }
         }
     }
