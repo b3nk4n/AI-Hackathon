@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.17" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="pYE-xa-CpI">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.14"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Camera View Controller-->
+        <scene sceneID="hlg-yS-qYF">
+            <objects>
+                <viewController id="pYE-xa-CpI" userLabel="Camera View Controller" customClass="CameraViewController" customModule="AVCamBarcode" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="pf6-pA-EQ2"/>
+                        <viewControllerLayoutGuide type="bottom" id="30E-zC-PQO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="GaW-eL-ee2">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="guD-bB-Q2w" customClass="PreviewView" customModule="AVCamBarcode" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="20" width="375" height="328"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Camera Unavailable" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nFV-EL-Pn1">
+                                <rect key="frame" x="83.5" y="319" width="208" height="29"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <color key="textColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="swI-mO-X7s">
+                                <rect key="frame" x="102" y="368" width="273" height="299"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fgg-8R-qeV">
+                                <rect key="frame" x="16" y="617" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="didPressTakePhoto:" destination="pYE-xa-CpI" eventType="touchUpInside" id="TmD-G2-Os4"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="guD-bB-Q2w" secondAttribute="trailing" id="1cL-8Q-X7G"/>
+                            <constraint firstItem="nFV-EL-Pn1" firstAttribute="centerY" secondItem="GaW-eL-ee2" secondAttribute="centerY" id="4U2-KX-s1p"/>
+                            <constraint firstItem="guD-bB-Q2w" firstAttribute="leading" secondItem="GaW-eL-ee2" secondAttribute="leading" id="Mt7-Rd-2RD"/>
+                            <constraint firstItem="nFV-EL-Pn1" firstAttribute="centerX" secondItem="GaW-eL-ee2" secondAttribute="centerX" id="WN4-Uh-Ja1"/>
+                            <constraint firstItem="30E-zC-PQO" firstAttribute="top" secondItem="guD-bB-Q2w" secondAttribute="bottom" constant="319" id="bvU-g8-pba"/>
+                            <constraint firstItem="guD-bB-Q2w" firstAttribute="top" secondItem="pf6-pA-EQ2" secondAttribute="bottom" id="xPs-b3-y3x"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <connections>
+                        <outlet property="cameraUnavailableLabel" destination="nFV-EL-Pn1" id="xoc-xK-b7e"/>
+                        <outlet property="capturedImage" destination="swI-mO-X7s" id="6Tv-f5-dwy"/>
+                        <outlet property="previewView" destination="guD-bB-Q2w" id="m5z-tC-RRN"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="B6K-l6-dJ5" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="304.80000000000001" y="388.15592203898052"/>
+        </scene>
+        <!--Item Selection View Controller-->
+        <scene sceneID="fTa-Za-MkS">
+            <objects>
+                <tableViewController id="PBC-n5-MIm" userLabel="Item Selection View Controller" customClass="ItemSelectionViewController" customModule="AVCamBarcode" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="N68-f6-mTy">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Item" textLabel="R6q-rR-Tno" style="IBUITableViewCellStyleDefault" id="PJ2-9Z-PLE">
+                                <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="PJ2-9Z-PLE" id="qQK-uf-VyZ">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="R6q-rR-Tno">
+                                            <rect key="frame" x="16" y="0.0" width="344" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <sections/>
+                        <connections>
+                            <outlet property="dataSource" destination="PBC-n5-MIm" id="Npa-Tv-GhR"/>
+                            <outlet property="delegate" destination="PBC-n5-MIm" id="0Gr-Y1-ACe"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="eh9-zC-GKS">
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="UQG-Fm-Ghg">
+                            <connections>
+                                <action selector="done" destination="PBC-n5-MIm" id="LdY-gh-NJi"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fmz-Lz-F62" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2062" y="389"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="ZDG-M1-580">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="GLg-Kk-VL1" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" translucent="NO" id="bLZ-a8-d7u">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="PBC-n5-MIm" kind="relationship" relationship="rootViewController" id="ACT-R5-6oB"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2L1-Rt-Rk0" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1250" y="389"/>
+        </scene>
+    </scenes>
+    <color key="tintColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+</document>
