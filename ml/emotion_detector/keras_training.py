@@ -53,10 +53,10 @@ validation_generator = test_datagen.flow_from_directory(
 
 model.fit_generator(
         train_generator,
-        samples_per_epoch=200000,  # TODO count number of training examples?
-        nb_epoch=5,
+        samples_per_epoch=31124,  # TODO count number of training examples?
+        nb_epoch=100,
         validation_data=validation_generator,
-        nb_val_samples=800)  # TODO count number of valid examples?
+        nb_val_samples=7701)  # TODO count number of valid examples?
 
 # export model weights
 model.save_weights('first_try.h5')
