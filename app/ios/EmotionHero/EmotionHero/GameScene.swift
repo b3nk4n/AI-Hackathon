@@ -140,7 +140,6 @@ class GameScene: SKScene {
     
     
 }
-
 extension SKSpriteNode {
     
     func addGlow(radius: Float = 30) {

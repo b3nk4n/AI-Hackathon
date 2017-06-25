@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		830CE5201EFFDB3100486687 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830CE51C1EFFDB3000486687 /* CameraViewController.swift */; };
 		830CE5221EFFDB3100486687 /* ExpressionRecognition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830CE51E1EFFDB3000486687 /* ExpressionRecognition.swift */; };
 		830CE5231EFFDB3100486687 /* CropRotateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830CE51F1EFFDB3000486687 /* CropRotateExtensions.swift */; };
 		832FA80E1EFEC4860001B598 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 832FA80D1EFEC4860001B598 /* AppDelegate.swift */; };
@@ -25,7 +24,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		830CE51C1EFFDB3000486687 /* CameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CameraViewController.swift; path = ../../FaceDetectionSquare/AVCamBarcode/CameraViewController.swift; sourceTree = "<group>"; };
 		830CE51E1EFFDB3000486687 /* ExpressionRecognition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExpressionRecognition.swift; path = ../../FaceDetectionSquare/AVCamBarcode/ExpressionRecognition.swift; sourceTree = "<group>"; };
 		830CE51F1EFFDB3000486687 /* CropRotateExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CropRotateExtensions.swift; path = ../../FaceDetectionSquare/AVCamBarcode/CropRotateExtensions.swift; sourceTree = "<group>"; };
 		832FA80A1EFEC4860001B598 /* EmotionHero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EmotionHero.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,7 +76,6 @@
 				838B67561F0021B600317991 /* keras_model.mlmodel */,
 				832FA82B1EFEC80A0001B598 /* emoji_faces */,
 				832FA8251EFEC5340001B598 /* GameScene.swift */,
-				830CE51C1EFFDB3000486687 /* CameraViewController.swift */,
 				830CE51F1EFFDB3000486687 /* CropRotateExtensions.swift */,
 				830CE51E1EFFDB3000486687 /* ExpressionRecognition.swift */,
 				832FA8261EFEC5340001B598 /* GridView.swift */,
@@ -174,7 +171,6 @@
 				832FA8161EFEC4870001B598 /* GameViewController.swift in Sources */,
 				833808991EFFA1C800D17601 /* PreviewView.swift in Sources */,
 				832FA8281EFEC5340001B598 /* GameScene.swift in Sources */,
-				830CE5201EFFDB3100486687 /* CameraViewController.swift in Sources */,
 				832FA8291EFEC5340001B598 /* GridView.swift in Sources */,
 				830CE5231EFFDB3100486687 /* CropRotateExtensions.swift in Sources */,
 				832FA80E1EFEC4860001B598 /* AppDelegate.swift in Sources */,

@@ -90,6 +90,7 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
          take a long time. We dispatch session setup to the sessionQueue so
          that the main queue isn't blocked, which keeps the UI responsive.
          */
+        
         sessionQueue.async { [unowned self] in
             self.configureSession()
         }
@@ -112,7 +113,7 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
     
     }
     
-    // MARK -- Camera stuff
+    // MARK: Camera stuff
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -457,42 +458,29 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
     
     let stillImageOutput = AVCapturePhotoOutput()
     var faceBounds = CGRect.null
-    @IBOutlet weak var capturedImage: UIImageView!
     public var faceImage = UIImage()
     
-    // Take picture button
-    @IBAction func didPressTakePhoto(_ sender: UIButton) {
+    func captureFace() {
         let settings = AVCapturePhotoSettings()
-        let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
-        let previewFormat = [
-            kCVPixelBufferPixelFormatTypeKey as String: previewPixelType,
-            kCVPixelBufferWidthKey as String: 160,
-            kCVPixelBufferHeightKey as String: 160
-        ]
-        settings.previewPhotoFormat = previewFormat
         stillImageOutput.capturePhoto(with: settings, delegate: self)
     }
     
+    // TODO: Maybe this CMSampleBuffer should be bigger
     // CallBack from take picture
     func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
-        
         if let error = error {
             print("error occured : \(error.localizedDescription)")
         }
-        
         if  let sampleBuffer = photoSampleBuffer,
-            let previewBuffer = previewPhotoSampleBuffer,
-            let dataImage =  AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer:  sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
+            let dataImage =  AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer:  sampleBuffer, previewPhotoSampleBuffer: nil) {
             let dataProvider = CGDataProvider(data: dataImage as CFData)
             let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
-            // TODO: Remove setting the UIView image
-            self.capturedImage.image = cropToPreviewLayer(originalImage: cgImageRef,
-                                                          layer: self.previewView.videoPreviewLayer,
-                                                          faceBounds: self.faceBounds)
+            
             faceImage = cropToPreviewLayer(originalImage: cgImageRef,
                                            layer: self.previewView.videoPreviewLayer,
                                            faceBounds: self.faceBounds)
-            print(predictEmotion(faceImage: faceImage))
+            prediction = predictEmotion(faceImage: faceImage)
+            
         } else {
             print("some error here")
         }
@@ -538,7 +526,22 @@ class GameViewController: UIViewController, AVCaptureMetadataOutputObjectsDelega
                 self.addMetadataObjectOverlayLayersToVideoPreviewView(metadataObjectOverlayLayers)
                 
                 self.metadataObjectsOverlayLayersDrawingSemaphore.signal()
+                
+                self.captureFace()
             }
         }
     }
 }
+
+extension UIInterfaceOrientation {
+    var videoOrientation: AVCaptureVideoOrientation? {
+        switch self {
+        case .portrait: return .portrait
+        case .portraitUpsideDown: return .portraitUpsideDown
+        case .landscapeLeft: return .landscapeLeft
+        case .landscapeRight: return .landscapeRight
+        default: return nil
+        }
+    }
+}
+
