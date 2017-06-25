@@ -15,6 +15,7 @@
 		7A921C8E1CD2858B00E7B04B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A921C8C1CD2858B00E7B04B /* LaunchScreen.storyboard */; };
 		7A921C961CD2861000E7B04B /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A921C951CD2861000E7B04B /* PreviewView.swift */; };
 		EAD2B9451EFF952100E82F6E /* ExpressionRecognition.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD2B9441EFF952100E82F6E /* ExpressionRecognition.swift */; };
+		EAD2B9531EFFDBBD00E82F6E /* keras_model.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = EAD2B9521EFFDBBC00E82F6E /* keras_model.mlmodel */; };
 		EAFE54581EFEA80B0055CA35 /* Crop+Rotate+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAFE54571EFEA80B0055CA35 /* Crop+Rotate+UIImage.swift */; };
 /* End PBXBuildFile section */
 
@@ -30,7 +31,7 @@
 		7A921C8F1CD2858B00E7B04B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7A921C951CD2861000E7B04B /* PreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		EAD2B9441EFF952100E82F6E /* ExpressionRecognition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionRecognition.swift; sourceTree = "<group>"; };
-		EAD2B9501EFFD7FB00E82F6E /* keras_model.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = keras_model.mlmodel; sourceTree = "<group>"; };
+		EAD2B9521EFFDBBC00E82F6E /* keras_model.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = keras_model.mlmodel; path = ../../../../Desktop/keras_model.mlmodel; sourceTree = "<group>"; };
 		EAFE54571EFEA80B0055CA35 /* Crop+Rotate+UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Crop+Rotate+UIImage.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -65,7 +66,7 @@
 		7A921C821CD2858B00E7B04B /* AVCamBarcode */ = {
 			isa = PBXGroup;
 			children = (
-				EAD2B9501EFFD7FB00E82F6E /* keras_model.mlmodel */,
+				EAD2B9521EFFDBBC00E82F6E /* keras_model.mlmodel */,
 				7A921C831CD2858B00E7B04B /* AppDelegate.swift */,
 				7A921C951CD2861000E7B04B /* PreviewView.swift */,
 				7A921C851CD2858B00E7B04B /* CameraViewController.swift */,
@@ -153,6 +154,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EAD2B9531EFFDBBD00E82F6E /* keras_model.mlmodel in Sources */,
 				7A5BA9721CD2B5EE0091A264 /* ItemSelectionViewController.swift in Sources */,
 				7A921C861CD2858B00E7B04B /* CameraViewController.swift in Sources */,
 				7A921C841CD2858B00E7B04B /* AppDelegate.swift in Sources */,

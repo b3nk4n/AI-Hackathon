@@ -417,6 +417,10 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     
     // Take picture button
     @IBAction func didPressTakePhoto(_ sender: UIButton) {
+        captureFace()
+    }
+    
+    func captureFace() {
         let settings = AVCapturePhotoSettings()
         let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
         let previewFormat = [
@@ -493,6 +497,8 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
                 self.addMetadataObjectOverlayLayersToVideoPreviewView(metadataObjectOverlayLayers)
                 
                 self.metadataObjectsOverlayLayersDrawingSemaphore.signal()
+                
+                self.captureFace()
             }
         }
     }
