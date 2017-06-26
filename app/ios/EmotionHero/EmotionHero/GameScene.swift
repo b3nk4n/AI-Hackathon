@@ -9,7 +9,6 @@
 import Foundation
 import SpriteKit
 
-
 class GameScene: SKScene {
     // TODO: something to manage neutral
     // TODO: store the faces in assets dewd
@@ -22,11 +21,8 @@ class GameScene: SKScene {
     // TODO: observer
     var score = 0
     var parentVC: UIViewController?
-    var prediction: String? {
-        didSet {
-            evaluateExpression()
-        }
-    }
+    var faceDetected: Bool?
+    var prediction: String?
     
     var spriteList: [(sprite: SKSpriteNode, position: Int, lane: Int)]
     
@@ -50,6 +46,17 @@ class GameScene: SKScene {
         sm.generateRandomSong(length: 200, difficulty: .Hard)
         
         
+    }
+    
+    // MARK: Some observers for properties of view controller
+    func receiveDetectionFromViewController(detected: Bool) {
+        //print("Recieved: \(detected)")
+        faceDetected = detected
+    }
+    
+    func receivePredictionFromViewController(prediction: String) {
+        print("Recieved prediction: \(prediction)")
+        self.prediction = prediction
     }
     
     func playSong(song: Song) {
@@ -90,7 +97,13 @@ class GameScene: SKScene {
     }
 
     func evaluateExpression() -> Bool {
-        return Bool.random()
+        print("Evaluating...")
+        if let detected = faceDetected {
+            print("Deteced: \(detected)")
+            return Bool.random(greaterThan:8) && detected
+        }
+        
+        return false
     }
     
     // TODO: dont hardcode these thresholds and maybe think about a time based callback system
@@ -121,12 +134,12 @@ class GameScene: SKScene {
         if let skview = view {
             parentVC = skview.parentViewController
             prediction = (parentVC! as! GameViewController).prediction
+            faceDetected = (parentVC! as! GameViewController).faceDetected
         }
     }
     
     
 }
-
 extension SKSpriteNode {
     
     func addGlow(radius: Float = 30) {
@@ -196,5 +209,10 @@ extension UIView {
 extension Bool {
     static func random() -> Bool {
         return arc4random_uniform(2) == 0
+    }
+    
+    // /10
+    static func random(greaterThan: Int) -> Bool {
+        return arc4random_uniform(11) < greaterThan
     }
 }

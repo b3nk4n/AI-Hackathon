@@ -38,15 +38,6 @@ extension MLMultiArray {
 // MARK: Emotion prediction
 let neuralModel = keras_model()
 public let emotions = ["angry", "disgust", "fear", "happy", "neutral", "sad", "surprise"]
-enum Emotions: Int {
-    case angry
-    case disgust
-    case fear
-    case happy
-    case neutral
-    case sad
-    case surprise
-}
 public func predictEmotion(faceImage: UIImage) -> String {
     let convertedImage = pixelBufferGray(from: faceImage)
     if let buffer = convertedImage {
