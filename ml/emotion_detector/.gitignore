@@ -4,3 +4,7 @@ summary/
 checkpoint/
 *.h5
 *.mlmodel
+
+
+# mac FS related
+.DS_Store
