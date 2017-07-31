@@ -107,3 +107,6 @@ ml/emotion_detector/raw/
 
 # PyChars
 .idea/
+
+# mac FS related
+.DS_Store
