@@ -55,7 +55,7 @@ validation_generator = test_datagen.flow_from_directory(
 model.fit_generator(
         train_generator,
         steps_per_epoch=train_generator.n // batch_size,
-        epochs=1,
+        epochs=30,
         callbacks=[keras.callbacks.TensorBoard(log_dir='summary_keras')],
         validation_data=validation_generator,
         validation_steps=validation_generator.n // batch_size,
