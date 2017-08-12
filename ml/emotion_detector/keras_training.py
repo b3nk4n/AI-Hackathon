@@ -40,7 +40,8 @@ train_generator = train_datagen.flow_from_directory(
         target_size=(image_size, image_size),
         color_mode='grayscale',
         batch_size=batch_size,
-        class_mode='categorical')
+        class_mode='categorical'
+)
 
 # this is a similar generator, for validation data
 validation_generator = test_datagen.flow_from_directory(
@@ -48,15 +49,17 @@ validation_generator = test_datagen.flow_from_directory(
         target_size=(image_size, image_size),
         color_mode='grayscale',
         batch_size=batch_size,
-        class_mode='categorical')
+        class_mode='categorical'
+)
 
 model.fit_generator(
         train_generator,
-        samples_per_epoch=train_generator.n,
-        nb_epoch=30,
+        steps_per_epoch=train_generator.n // batch_size,
+        epochs=1,
         callbacks=[keras.callbacks.TensorBoard(log_dir='summary_keras')],
         validation_data=validation_generator,
-        nb_val_samples=validation_generator.n)
+        validation_steps=validation_generator.n // batch_size,
+)
 
 # export model weights
 model.save_weights('first_try.h5')

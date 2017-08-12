@@ -88,7 +88,7 @@ class DexpressionNet(AbstractModel):
         pool_a = self.__max_pooling2d('pool_{}a'.format(id))(last_layer)
         conv_c = self.__conv2d('conv_{}c'.format(id))(pool_a)
 
-        concat = keras.layers.merge([conv_b, conv_c], mode='concat', concat_axis=-1)
+        concat = keras.layers.concatenate([conv_b, conv_c], axis=-1)
 
         pool_b = self.__max_pooling2d('pool_{}b'.format(id))(concat)
 
@@ -106,17 +106,16 @@ class DexpressionNet(AbstractModel):
         padding_type = conv_hp.get(self.HP_CONV_PADDING_TYPE, 'same')
 
         # def: https://www.tensorflow.org/api_docs/python/tf/contrib/layers/conv2d
-        conv2d = keras.layers.Conv2D(
-            nb_filter=n_filters,
-            nb_row=kernel_size[0],
-            nb_col=kernel_size[1],
-            init='glorot_uniform',
+        conv2d = keras.layers.convolutional.Conv2D(
+            filters=n_filters,
+            kernel_size=kernel_size,
+            strides=strides,
+            padding=padding_type,
+            data_format='channels_last',
             activation=activation_fn,
-            border_mode=padding_type,
-            subsample=strides,
-            W_regularizer=regularizer,
-            dim_ordering='tf',
-            bias=True,
+            use_bias=True,
+            kernel_initializer='glorot_uniform',
+            kernel_regularizer=regularizer,
             name=conv_name
         )
         return conv2d
@@ -133,8 +132,8 @@ class DexpressionNet(AbstractModel):
             # custom
             pool_size=pool_size,
             strides=strides,
-            border_mode=padding_type,
-            dim_ordering='tf',
+            padding=padding_type,
+            data_format='channels_last',
             name=max_pool_name
         )
         return reduced_weights
@@ -154,35 +153,39 @@ class DexpressionNet(AbstractModel):
         if not n_outs:
             dense_layer = keras.layers.Dense(
                 # custom
-                output_dim=n_outputs,
-                init='glorot_uniform',
+                units=n_outputs,
                 activation=activation_fn,
-                W_regularizer=regularizer,
-                bias=True,
+                use_bias=True,
+                kernel_initializer='glorot_uniform',
+                kernel_regularizer=regularizer,
                 name=fc_name
             )
         else:
             dense_layer = keras.layers.Dense(
                 # custom
-                output_dim=n_outs,
-                init='zero',
-                name=fc_name,
-                bias=False
+                units=n_outs,
+                use_bias=False,
+                kernel_initializer='zeros',
+                name=fc_name
             )
         return dense_layer, False
 
     def __batch_normalization(self):
         batch_norm = keras.layers.normalization.BatchNormalization(
             # default
-            epsilon=0.001,
-            mode=0,
-            axis=-1,
+            axis=-1,                   # normalize along the features ("channel" axis)
             momentum=0.99,
-            weights=None,
-            beta_init='zero',
-            gamma_init='one',
+            epsilon=0.001,
+            center=True,
+            scale=True,
+            beta_initializer='zeros',
+            gamma_initializer='ones',
+            moving_mean_initializer='zeros',
+            moving_variance_initializer='ones',
+            beta_regularizer=None,
             gamma_regularizer=None,
-            beta_regularizer=None
+            beta_constraint=None,
+            gamma_constraint=None
         )
         return batch_norm
 
@@ -193,7 +196,7 @@ class DexpressionNet(AbstractModel):
 
         out = keras.layers.core.Dropout(
             # custom
-            p=dropout_rate,
+            rate=dropout_rate,
             name='dropout_{}'.format(after_layer_name)
         )
         return out
@@ -236,7 +239,7 @@ class DexpressionNet(AbstractModel):
         predictions = keras.layers.Activation('softmax')(classifier)
 
         # put the graph in a keras model
-        model = keras.models.Model(input=inputs, output=predictions)
+        model = keras.models.Model(inputs=inputs, outputs=predictions)
 
         return model
 
